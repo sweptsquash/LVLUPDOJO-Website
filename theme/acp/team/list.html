@@ -1,0 +1,61 @@
+{% extends 'acp/base.html' %}
+
+{% block body %}
+	<div class="page-header">
+		<h1 class="page-title">
+			<i class="fas fa-users"></i> Team
+		</h1>
+    </div>
+
+	<div class="row row-cards row-deck">
+        {% if team %}
+            {% for key, member in team %}
+                <div class="col-md-4">
+                    <div class="card course m-2" id="member{{ member.id }}">
+                        <div class="card-image">
+                            <img class="card-img-top" src="{{ baseuri }}{{ member.avatar }}" alt="{{ member.name }}" />
+                            <div class="card-img-overlay">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-8">
+                                        <h5 class="card-title text-light mb-0">{{ member.name }}</h5>
+                                    </div>
+                                    <div class="col-sm-12 col-md-4 text-right">
+                                        {% if member.active == 1 %}
+                                            <span class="badge badge-pill badge-primary">Active</span>
+                                        {% else %}
+                                            <span class="badge badge-pill badge-danger">Not Active</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body text-dark">
+                            <div class="row mb-0">
+                                <div class="col-sm-12 col-md-6">
+                                    <a href="{{ rooturi }}/admin/team/e/{{ member.id }}/" class="btn btn-block btn-success">
+                                        <i class="fas fa-pencil"></i> Edit
+                                    </a>
+                                </div>
+                                <div class="col-sm-12 col-md-6">
+                                    <a href="{{ rooturi }}/admin/team/d/{{ member.id }}/" class="btn btn-block btn-danger">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            
+            {% if pagination %}
+                <div class="col-md-12">{{ pagination }}</div>
+            {% endif %}
+        {% else %}
+            <div class="col-md-12">
+                <div class="alert alert-danger" role="alert">No Team Members Found...</div>
+            </div>
+        {% endif %}
+    </div>	
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

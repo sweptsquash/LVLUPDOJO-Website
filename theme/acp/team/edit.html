@@ -1,0 +1,147 @@
+{% extends 'acp/base.html' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            {% if success and mode == 'create' %}
+                <div class="alert alert-success" role="alert">
+                    Team Member Added.
+                </div>
+            {% endif %}
+            <form method="POST" enctype="multipart/form-data" action="" class="card{% if success and mode == 'create' %}d-none{% endif %}">
+                <div class="card-header">
+                    <h3 class="card-title">{% if mode == 'create' %}Add{% else %}Edit{% endif %} Team Member</h3>
+                </div>
+                <div class="card-body">
+                    {% if success and mode == 'edit' %}
+                        <div class="alert alert-success" role="alert">
+                            Team Member Updated.
+                        </div>
+                    {% endif %}
+                    {% if error %}
+                        <div class="alert alert-danger" role="alert">
+                            <ul class="mb-0">
+                                {% for message in error %}
+                                    <li>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="avatarUpload" class="col-form-label">Avatar</label>
+                                <input type="file" name="avatarUpload" id="avatarUpload" tabindex="1" />
+                                <p class="text-muted">
+                                    <small>Image must be 512 (width) x 512 (height), JPG or PNG and less than 12MB in size.</small>                            
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" name="name" id="name" class="form-control" value="{{ member.name }}" tabindex="2" />
+                            </div>
+                            <div class="form-group">
+                                <label for="active">Active</label>
+                                <select name="active" id="active" class="form-control" tabindex="3">
+                                    <option value="0"{% if member.active == 0 %} selected{% endif %}>No</option>
+                                    <option value="1"{% if member.active == 1 %} selected{% endif %}>Yes</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="position">Position</label>
+                                <input type="text" name="position" id="position" class="form-control" value="{{ member.position }}" tabindex="4" />
+                            </div>
+                            <div class="form-group">
+                                <label for="badge">Badge Colour</label>
+                                <select name="badge" id="badge" class="form-control" tabindex="5">
+                                    <option value="primary"{% if member.badge == 'primary' %} selected="selected"{% endif %} class="bg-primary">Blue</option>
+                                    <option value="secondary"{% if member.badge == 'secondary' %} selected="selected"{% endif %} class="bg-secondary">Grey</option>
+                                    <option value="success"{% if member.badge == 'success' %} selected="selected"{% endif %} class="bg-success">Green</option>
+                                    <option value="danger"{% if member.badge == 'danger' %} selected="selected"{% endif %} class="bg-danger">Red</option>
+                                    <option value="warning"{% if member.badge == 'warning' %} selected="selected"{% endif %} class="bg-warning">Yellow</option>
+                                    <option value="info"{% if member.badge == 'info' %} selected="selected"{% endif %} class="bg-info">Teal</option>
+                                    <option value="light"{% if member.badge == 'light' %} selected="selected"{% endif %} class="bg-light">Light Grey</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="twitter">Twitter Handle/Username</label>
+                                <input type="text" name="twitter" id="twitter" class="form-control" value="{{ member.twitter }}" tabindex="6" />
+                            </div>
+                            <div class="form-group">
+                                <label for="linkedin">LinkedIn URL</label>
+                                <input type="text" name="linkedin" id="linkedin" class="form-control" value="{{ member.linkedin }}" tabindex="7" />
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="card-footer text-center">
+                    <input type="hidden" name="avatarFile" id="avatarFile" value="{{ member.avatar }}" />
+                    <a href="{{ baseuri }}/admin/team/" class="btn btn-danger">
+                        <i class="far fa-times"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-success" name="submit" id="submit" tabindex="8">
+                        <i class="far fa-save"></i> {% if mode == 'create' %}Add{% else %}Update{% endif %} Team Member                       
+                    </button>
+                </div>
+            </form>
+        </div>        
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="{{ baseuri }}/js/filepond.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/filepond.plugin.preview.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/filepond.plugin.filesize.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/filepond.plugin.filetype.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/jquery.filepond.min.js"></script>
+    <script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+        $(function() {
+            $.fn.filepond.registerPlugin(
+                FilePondPluginImagePreview,
+                FilePondPluginFileValidateSize,
+                FilePondPluginFileValidateType
+            );
+
+            $.fn.filepond.setDefaults({
+                maxFileSize: '12MB',
+                acceptedFileTypes: [
+                    'image/png',
+                    'image/jpeg'
+                ],
+                labelIdle: 'Drag & Drop your picture or <span class="filepond--label-action">Browse</span>'
+            });
+
+            $('#avatarUpload').filepond({
+                allowMultiple: false,
+                instantUpload: true,
+                class: 'filepond-thumbnail',
+                required: true,
+                server: {
+                    url: baseuri + '/FilePond.php'                        
+                },   
+                {% if member.avatar %}
+                    files: [{
+                        source: '{{ member.avatar }}',
+                        options: {
+                            type: '{{ member.avatar_type }}'
+                        }
+                    }],
+                {% endif %}
+                onaddfile: function(error, file) {
+                    file.setMetadata('method', 'avatar');
+                },
+                onprocessfile: function(error, file) {
+                    $('input[name="avatarFile"]').val(file.serverId);
+                },
+                onprocessfileundo: function(file) {
+                    $('input[name="avatarFile"]').val('');
+                },
+                onremovefile: function(file) {
+                    $('input[name="avatarFile"]').val('');
+                }
+            });
+        });
+    </script>
+{% endblock %}

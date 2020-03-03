@@ -1,0 +1,164 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<header class="parallax-banner small-banner header-shadow bg-dark-grey">
+		<div class="image"  style="background-image:url('{{ baseuri }}{{ config.default_banner }}');"></div>
+		<div class="container">
+			<div class="row pb-5 mb-5">
+				<div class="col-12 text-center pb-5 mb-5">
+					<h1>Security</h1>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="bg-white diagonal-open-dark text-dark py-5 clip-path-fix">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3">
+					<div class="list-group">
+						<a href="{{ baseuri }}/dashboard/" class="list-group-item list-group-item-action">
+							<i class="fas fa-book"></i> My Courses
+						</a>
+						<a href="{{ baseuri }}/dashboard/account/" class="list-group-item list-group-item-action">
+							<i class="fas fa-user"></i> Account
+						</a>
+						<a href="{{ baseuri }}/dashboard/remove/" class="list-group-item list-group-item-action">
+							<i class="fas fa-user-times"></i> Delete Account
+						</a>
+						<a href="{{ baseuri }}/dashboard/security/" class="list-group-item list-group-item-action active">
+							<i class="fas fa-shield-alt"></i> Security
+						</a>
+						<a href="{{ baseuri }}/dashboard/billing/" class="list-group-item list-group-item-action">
+							<i class="fas fa-credit-card"></i> Billing
+						</a>
+						<a href="{{ baseuri }}/dashboard/connections/" class="list-group-item list-group-item-action">
+							<i class="fas fa-link"></i> Connections
+						</a>
+					</div>
+				</div>
+				<div class="col-md-9">
+					<div class="card-deck mb-3">
+						<div class="card">
+							<h5 class="card-header"><i class="far fa-lock"></i> Change Password</h5>
+							<div class="card-body">
+								<form class="needs-validation" name="passwordForm" id="passwordForm" method="post" action="">
+									{% if passwordSuccess %}
+										<div class="form-group mb-0">
+											<div class="swal-icon swal-icon--success">
+												<span class="swal-icon--success__line swal-icon--success__line--long"></span>
+												<span class="swal-icon--success__line swal-icon--success__line--tip"></span>
+												<div class="swal-icon--success__ring"></div>
+												<div class="swal-icon--success__hide-corners"></div>
+											</div>
+											<div class="swal-title">Password Updated</div>
+										</div>
+									{% else %}
+										{% if passwordError %}
+											<div class="col-md-12">
+												<div class="alert alert-danger" role="alert">
+													<ul>
+														{% for message in passwordError %}
+															<li>{{ message }}</li>
+														{% endfor %}
+													</ul>
+												</div>
+											</div>
+										{% endif %}
+										<div class="form-group">
+											<label for="currentPassword">Current Password</label>
+											<input type="password" name="currentPassword" id="currentPassword" class="form-control" tabindex="1" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="right" data-content="To change your password, you must enter your current password." />
+										</div>
+										<div class="form-group">
+											<label for="newPassword">New Password</label>
+											<input type="password" name="newPassword" id="newPassword" class="form-control" tabindex="2" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="right" data-content="MUST be between 6 and 100 characters long and contain letters and numbers." />
+										</div>
+										<div class="form-group">
+											<label for="confirmNewPassword">Confirm New Password</label>
+											<input type="password" name="confirmNewPassword" id="confirmNewPassword" class="form-control" tabindex="3" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="right" data-content="MUST be between 6 and 100 characters long and contain letters and numbers." />
+										</div>
+										<div class="form-group text-center mb-0">
+											<input type="hidden" name="CSRFName" value="{{ passwordForm.CSRF[0] }}" />
+											<input type="hidden" name="CSRFToken" value="{{ passwordForm.CSRF[1] }}" />
+											<button type="submit" name="updatePasswordBtn" id="updatePasswordBtn" class="btn btn-lg btn-primary" tabindex="4">
+												Update Password
+											</button>
+										</div>
+									{% endif %}
+								</form>
+							</div>
+						</div>
+						{#<div class="card">
+							<h5 class="card-header"><i class="far fa-mobile"></i> Two Factor Authentication</h5>
+							<div class="card-body">
+								<p class="text-center">soonTM</p>
+							</div>
+						</div>#}
+					</div>
+					<div class="card">
+						<h5 class="card-header"><i class="fas fa-globe"></i> Where you're logged in</h5>
+						<div class="card-body">
+							<p>The login keys automatically log you in when you visit the site. If you logout, the remember me login key is deleted only on the computer you are using to logout. Here you can see remember login keys created on other computers you used to access this site.</p>
+							
+							<h3 class="mb-3">Current Session</h3>
+							<ul class="list-group sessions-list mb-3">
+								<li class="list-group-item" id="session-{{ sessions.current.key_id }}">
+									<h5 class="mb-1"><strong>Active Now</strong></h5>
+									<small><strong>IP:</strong> {{ sessions.current.last_ip }}</small>									
+								</li>
+							</ul>	
+							
+							<h3 class="mb-3">Previous Sessions</h3>
+							{% if sessions.past %}
+								<ul class="list-group sessions-list">
+									{% for session in sessions.past %}
+										<li class="list-group-item" id="session-{{ session.key_id }}">
+											<h5 class="mb-1"><strong>Last Accessed:</strong> {{ session.last_login }}</h5>
+											<small><strong>IP:</strong> {{ session.last_ip }}</small>
+											<a href="#" data-remove="{{ session.key_id }}" data-toggle="tooltip" data-placement="bottom" title="End Session">
+												<i class="far fa-times"></i>
+											</a>											
+										</li>
+									{% endfor %}
+								</ul>								
+							{% else %}
+								<div class="alert alert-info" role="alert">No Previous Sessions Found.</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>		
+		</div>
+	</section>
+{% endblock %}
+
+{% block javascripts %}
+	<script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+		$(function() {
+			$('[data-remove]').click(function(e) {
+				e.preventDefault();
+				
+				var key = $(this).data('remove');
+
+				$.ajax({
+					method: 'POST',
+					url: baseuri + '/api/sessions/',
+					data: { method: 'delete', session: key }
+				}).done(function(data) {
+					if(data.result == 'success') {
+						$('#session-'+key).remove();
+						
+						if($('#previousSessions li').length == 0) {
+							$('<div class="alert alert-info" role="alert">No Previous Sessions Found.</div>').insertBefore($('#previousSessions'));
+							$('#previousSessions').remove();
+						}
+					} else {
+						swal("An error occurred!", data.message, "error");
+					}
+				}).fail(function(data) {
+					swal("An error occurred!", data.message, "error");
+				});
+			});
+		});
+	</script>
+{% endblock %}

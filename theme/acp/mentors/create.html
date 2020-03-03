@@ -1,0 +1,261 @@
+{% extends 'acp/base.html' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/froala_editor.pkgd.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/char_counter.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/code_view.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/colors.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/emoticons.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/file.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/fullscreen.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/image.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/image_manager.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/line_breaker.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/quick_insert.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/special_characters.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/table.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/video.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/themes/gray.min.css" type="text/css" />
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <form method="POST" enctype="multipart/form-data" action="">
+                {% if success %}
+                    <div class="alert alert-success" role="alert">
+                        {{ success }}
+                    </div>
+                {% else %}
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Create Mentor</h3>
+                        </div>
+                        <div class="card-body">
+                            {% if error %}
+                                <div class="alert alert-danger" role="alert">
+                                    <ul class="mb-0">
+                                        {% for message in error %}
+                                            <li>{{ message }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="avatarUpload" class="col-form-label">Mentor Avatar</label>
+                                        <input type="file" name="avatarUpload" id="avatarUpload" />
+                                        <p class="text-muted">
+                                            <small>Image must be 700 (width) x 552 (height), JPG or PNG and less than 12MB in size.</small>                            
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="form-group">
+                                        <label for="name">Mentors Name</label>
+                                        <input type="text" name="name" id="name" class="form-control" value="{{ form.name }}" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="active">Mentors Active</label>
+                                        <select name="active" id="active" class="form-control">
+                                            <option value="0"{% if form.active == 0 %} selected{% endif %}>No</option>
+                                            <option value="1"{% if form.active == 1 %} selected{% endif %}>Yes</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="user">Mentors Accout</label>
+                                        {% if form.user.id %}
+                                            {{ form.user.name }}
+                                        {% else %}
+                                            <div class="typeahead-container">
+                                                <div id="scrollable-dropdown-menu">
+                                                    <input type="text" class="form-control typeahead" id="user" name="user" placeholder="Account..." value="{{ form.user.name }}">
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="description" class="col-form-label">Description</label>
+                                        <textarea name="description" id="description">{{ form.description }}</textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="keywords" class="col-form-label">Keywords</label>
+                                        <input type="text" name="keywords" id="keywords" placeholder="Keywords..." value="{{ form.keywords }}" />
+                                        <p class="text-muted">
+                                            <small>Keywords to be seperated with a comma.</small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <input type="hidden" name="avatarFile" id="avatarFile" value="{{ form.avatar }}" />
+                                <input type="hidden" name="userID" id="userID" value="{{ form.user.id }}" />
+                                <a href="{{ baseuri }}/admin/mentors/" class="btn btn-danger">
+                                    <i class="far fa-times"></i> Cancel
+                                </a>
+                                <button type="submit" name="createMentor" id="createMentor" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Create Mentor
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="{{ baseuri }}/js/handlebars.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/typeahead.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/mode/xml/xml.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/froala_editor.pkgd.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/align.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/char_counter.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/code_view.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/colors.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/emoticons.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/entities.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/file.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/font_family.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/font_size.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/fullscreen.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/image.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/image_manager.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/inline_style.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/line_breaker.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/link.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/lists.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/paragraph_format.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/paragraph_style.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/print.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/quick_insert.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/quote.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/save.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/special_characters.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/table.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/url.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/video.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/selectize.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/filepond.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/filepond.plugin.preview.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/filepond.plugin.filesize.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/filepond.plugin.filetype.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/jquery.filepond.min.js"></script>
+    <script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+        $(function() {
+            $.fn.filepond.registerPlugin(
+                FilePondPluginImagePreview,
+                FilePondPluginFileValidateSize,
+                FilePondPluginFileValidateType
+            );
+
+            $.fn.filepond.setDefaults({
+                maxFileSize: '12MB',
+                acceptedFileTypes: [
+                    'image/png',
+                    'image/jpeg'
+                ],
+                labelIdle: 'Drag & Drop your picture or <span class="filepond--label-action">Browse</span>'
+            });
+
+            $('#avatarUpload').filepond({
+                allowMultiple: false,
+                instantUpload: true,
+                class: 'filepond-thumbnail',
+                required: true,
+                acceptedFileTypes: [
+                    'image/jpg',
+                    'image/jpeg',
+                    'image/png'
+                ],
+                server: {
+                    url: baseuri + '/FilePond.php'                        
+                },   
+                {% if form.avatar %}
+                    files: [{
+                        source: '{{ form.avatar }}',
+                        options: {
+                            type: '{{ form.avatar_type }}'
+                        }
+                    }],
+                {% endif %}
+                onaddfile: function(error, file) {
+                    file.setMetadata('method', 'avatar');
+                },
+                onprocessfile: function(error, file) {
+                    $('input[name="avatarFile"]').val(file.serverId);
+                },
+                onprocessfileundo: function(file) {
+                    $('input[name="avatarFile"]').val('');
+                },
+                onremovefile: function(file) {
+                    $('input[name="avatarFile"]').val('');
+                }
+            });
+
+            $('textarea[name="description"]').froalaEditor({
+                toolbarButtons: [
+                    'fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 
+                    'fontFamily', 'fontSize', 'color', 'inlineStyle', 'paragraphStyle', '|', 
+                    'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', '-', 'insertLink', '|', 
+                    'emoticons', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 
+                    'print', 'spellChecker', 'help', 'html', '|', 
+                    'undo', 'redo'
+                ],
+                videoInsertButtons: [''],
+                imageInsertButtons: [''],
+                quickInsertTags: [''],
+                pluginsEnabled: null,
+                heightMin: 450,
+                theme: 'gray',
+            });
+
+            // Temp removal of froala license cover
+            $("a:contains('Unlicensed')").remove();
+
+            var users = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('username'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: baseuri + '/api/users/%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            {% verbatim %}
+                $('#scrollable-dropdown-menu .typeahead').typeahead({
+                    hint: true,
+                    highlight: true
+                }, {
+                    name: 'users',
+                    display: 'username',
+                    limit: 15,
+                    source: users,
+                    templates: {
+                        empty: '<span class="row m-0"><div class="alert alert-danger mb-0" role="alert" style="width:100%;">No Users Found...</div></span>',
+                        suggestion: Handlebars.compile('<span class="tt-row text-left" title="{{ username }}"><span class="avatar avatar-md" style="background-image:url(\'{{ avatar }}\');"></span><span class="username" style="height:auto; max-height:60px;"><p class="mb-0">{{ username }}</p><p class="text-muted mb-0"><small>{{ name }}</small></p></span></span>')
+                    }
+                });
+            {% endverbatim %}
+
+            $('#scrollable-dropdown-menu .typeahead').bind('typeahead:select', function(ev, item) {
+                $('input[name="userID"]').val(item.id);
+            });
+
+            $('#keywords').selectize({
+                delimiter: ',',
+                persist: false,
+                create: function (input) {
+                    return {
+                        value: input,
+                        text: input
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

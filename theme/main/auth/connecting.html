@@ -1,0 +1,26 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+    <section class="bg-grey diagonal-open-dark light text-dark pb-5" style="padding-top:15rem;">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-6">
+                    <h1>Connecting to {{ service }}...</h1>
+                    <div class="loader">
+                        <div class="loader_spinner style-scope">
+                            <div class="loader_spinner-fragment style-scope">
+                                <div class="loader_spinner-circle style-scope">
+                                    <div class="loader_spinner-arc style-scope"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ javascript }}
+{% endblock %}

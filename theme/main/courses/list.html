@@ -1,0 +1,295 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<header class="parallax-banner small-banner header-shadow bg-dark-grey">
+		<div class="image"  style="background-image:url('{{ baseuri }}{% if banner is not null %}{{ banner }}{% else %}{{ config.default_banner }}{% endif %}');"></div>
+		<div class="container">
+			<div class="row pb-5 mb-5">
+				<div class="col-12 text-center pb-5 mb-5">
+					<h1>{{ title }}</h1>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="bg-grey diagonal-open-dark light text-dark py-5 clip-path-fix">
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					{% if breadcrumbs %}
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item">
+									<a href="{{ baseuri }}/" title="Home">
+										<i class="far fa-home"></i>
+									</a>
+								</li>
+								<li class="breadcrumb-item">
+									<a href="{{ baseuri }}/courses/" title="Courses">
+										Courses
+									</a>
+								</li>
+								{% for key, crumb in breadcrumbs %}
+									<li class="breadcrumb-item{% if crumb.active %} active{% endif %}"{% if crumb.active %} aria-current="page"{% endif %}>
+										{% if crumb.active is null %}<a href="{{ baseuri }}/courses/c/{{ crumb.url }}/">{% endif %}
+											{{ crumb.text }}
+										{% if crumb.active is null %}</a>{% endif %}
+									</li>
+								{% endfor %}
+							</ol>
+						</nav>
+					{% endif %}
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-3">
+					<h3>Category</h3>
+					<div class="list-group mb-3">
+						{% for key, category in categories %}
+							<a href="{{ baseuri }}/courses/c/{{ category.slug }}/" class="list-group-item {% if activeCategory == category.id %}active{% endif %} list-group-item-action d-flex justify-content-between align-items-center" title="{{ category.count }} {{ category.name }} Courses">
+								{{ category.name }}
+								<span class="badge badge-dark badge-pill" title="{{ category.count }} Courses">{{ category.count }}</span>
+							</a>
+							{% if category.children is not null %}
+								{% for ckey, child in category.children %}
+									<a href="{{ baseuri }}/courses/c/{{ child.slug }}/" class="list-group-item {% if activeCategory == child.id %}active{% endif %} list-group-item-action d-flex justify-content-between align-items-center" title="{{ child.count }} {{ child.name }} Courses">
+										&nbsp;&nbsp;&nbsp;&nabla; {{ child.name }}
+										<span class="badge badge-dark badge-pill" title="{{ child.count }} Courses">{{ child.count }}</span>
+									</a>
+								{% endfor %}
+							{% endif %}
+						{% endfor %}						
+					</div>
+					{#{% if tags is not null %}
+						<h3>Tags</h3>
+						<div class="overflow-container mb-3 pl-3 pr-3">
+							{% for key, tag in tags %}
+								<a href="#" class="d-block option-wrapper">
+									<label class="d-flex justify-content-between align-items-center">
+										<input type="checkbox" name="tag{{ loop.index0 }}" id="tag{{ loop.index0 }}" value="{{ tag.name }}" class="d-none" />
+										<span>
+											{{ tag.name }}
+										</span>
+										<span class="badge badge-dark badge-pill">{{ tag.count }}</span>
+									</label>
+								</a>
+							{% endfor %}
+						</div>
+					{% endif %}
+					<h3>Rating</h3>
+					<div class="overflow-container mb-3 pl-3 pr-3">
+						<a href="#" class="d-block option-wrapper">
+							<label class="d-flex justify-content-between align-items-center">
+								<input type="radio" name="rating" id="ratingAll" value="0" class="d-none" checked />
+								<span>
+									Show All
+								</span>
+							</label>
+						</a>
+						<a href="#" class="d-block option-wrapper">
+							<label class="d-flex justify-content-between align-items-center">
+								<input type="radio" name="rating" id="ratingOneHigher" value="1" class="d-none" />
+								<span>
+									1 star and higher
+								</span>
+							</label>
+						</a>
+						<a href="#" class="d-block option-wrapper">
+							<label class="d-flex justify-content-between align-items-center">
+								<input type="radio" name="rating" id="ratingTwoHigher" value="2" class="d-none" />
+								<span>
+									2 star and higher
+								</span>
+							</label>
+						</a>
+						<a href="#" class="d-block option-wrapper">
+							<label class="d-flex justify-content-between align-items-center">
+								<input type="radio" name="rating" id="ratingThreeHigher" value="3" class="d-none" />
+								<span>
+									3 star and higher
+								</span>
+							</label>
+						</a>
+						<a href="#" class="d-block option-wrapper">
+							<label class="d-flex justify-content-between align-items-center">
+								<input type="radio" name="rating" id="ratingFourHigher" value="4" class="d-none" />
+								<span>
+									4 star and higher
+								</span>
+							</label>
+						</a>
+					</div>#}
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-9 pt-5">
+					{% if mentor %}
+						<div class="card mb-3">
+							<div class="card-header">
+								<h4 class="h2 m-0">About {{ mentor.name }}</h4>
+							</div>
+							<div class="card-body">
+								<div class="row">
+									<div class="col-md-3 text-center">
+										<img src="{{ mentor.avatar }}" width="160" height="160" class="rounded-circle mb-2" alt="{{ mentor.name }}" />
+										{#<select id="mentorRating">
+											<option value=""></option>
+											<option value="1">1</option>
+											<option value="2">2</option>
+											<option value="3">3</option>
+											<option value="4">4</option>
+											<option value="5">5</option>
+										</select>#}
+									</div>
+									<div class="col-md-9">
+										{{ mentor.description }}
+									</div>
+								</div>
+							</div>
+						</div>
+						<h3>{{ mentor.name }} Courses</h3>
+					{% endif %}
+					{% if mentors %}
+						{% set offset = 0 %}
+					
+						{% for key, men in mentors %}
+							{% if offset == 0 %}
+								<div class="card-deck mb-3">
+							{% endif %}
+								<a href="{{ baseuri }}/courses/m/{{ men.slug }}/" class="card course m-2" id="mentor{{ men.id }}">
+									<div>
+										<img class="card-img-top" src="{{ baseuri }}{{ men.avatar }}" alt="{{ men.name }}" />
+										<div class="title-container">
+											<h5 class="card-title mb-1">{{ men.name }}</h5>
+										</div>
+									</div>
+									<div class="card-body text-dark">
+										{{ men.description }}
+									</div>
+								</a>
+									
+							{% set offset = offset + 1 %}
+							{% if offset == 3 %}
+								</div>
+								{% set offset = 0 %}
+							{% endif %}
+						{% endfor %}
+						{% if (not offset == 0) and (offset < 3) %}
+							</div>									
+						{% endif %}
+					
+						{% if pagination %}
+							{{ pagination }}
+						{% endif %}
+					{% elseif mentors is null and depth == 'mentors' %}
+						<div class="alert alert-danger" role="alert">No Mentors Found...</div>
+					{% endif %}
+				    {% if depth != 'mentors' and depth != 'mentors' %}
+						{% if courses %}
+							{% set offset = 0 %}
+						
+							{% for key, course in courses %}
+								{% if offset == 0 %}
+									<div class="card-deck mb-3">
+								{% endif %}
+										
+									<a href="{{ baseuri }}/courses/{{ course.slug }}/" class="card course m-2" id="course{{ course.id }}">
+										<div>
+											<img class="card-img-top" src="{{ baseuri }}{{ course.thumbnail }}" alt="{{ course.name }}" />
+											<div class="title-container">
+												<h5 class="card-title mb-1">{{ course.name }}</h5>
+											</div>
+											{% if (user.is_registered == true and course.owned == true) %}
+												<div class="progress">
+													<div class="progress-bar" role="progressbar" style="width: {% if course.progress is null %}0{% else %}{{ course.progress.percent }}{% endif %}%;" aria-valuenow="{% if course.progress is null %}0{% else %}{{ course.progress.percent }}{% endif %}" aria-valuemin="0" aria-valuemax="100"></div>
+												</div>
+											{% endif %}
+										</div>
+										<div class="card-body text-dark">
+											<div class="row mb-2">
+												<div class="col-xs-12 col-sm-6 col-md-6">
+													{% if course.categories %}
+														{% for ckey, category in course.categories %}
+															<span class="badge badge-{{ category.class }} p-2">
+																{% if category.icon is not null %}
+																	<i class="{{ category.icon }}"></i> 
+																{% endif %}{{ category.name }}
+															</span>
+														{% endfor %}
+													{% else %}
+														&nbsp;
+													{% endif %}
+													{#<select id="course{{ course.id }}Rating">
+														<option value=""></option>
+														<option value="1">1</option>
+														<option value="2">2</option>
+														<option value="3">3</option>
+														<option value="4">4</option>
+														<option value="5">5</option>
+													</select>#}
+												</div>
+												<div class="col-xs-12 col-sm-6 col-md-6 text-right">
+													{% if ((user.is_registered == false or user.is_registered == true) and course.owned == false) %}
+														{% if course.cost.discount is not null %}
+															<small>
+																<s>${{ course.cost.price }}</s>
+															</small> <strong>$<span>{{ course.cost.discount_value }}</span></strong>
+														{% else %}
+															<strong>${{ course.cost.price }}</strong>
+														{% endif %}
+													{% else %}
+														<span class="badge badge-success"><i class="fas fa-shield-check"></i> Owned</span>
+													{% endif %}
+												</div>
+											</div>											
+											{#{% if course.categories %}
+												{% for ckey, category in course.categories %}
+													<span class="badge badge-{{ category.class }} p-2">
+														{% if category.icon is not null %}
+															<i class="{{ category.icon }}"></i> 
+														{% endif %}{{ category.name }}
+													</span>
+												{% endfor %}
+											{% endif %}#}
+											<p class="mt-2 mb-0">
+												{{ course.excerpt }}
+											</p>
+										</div>
+									</a>
+										
+								{% set offset = offset + 1 %}
+								{% if offset == 3 %}
+									</div>
+									{% set offset = 0 %}
+								{% endif %}
+							{% endfor %}
+							{% if (not offset == 0) and (offset < 3) %}
+								</div>									
+							{% endif %}
+						
+							{% if pagination %}
+								{{ pagination }}
+							{% endif %}
+						{% else %}
+							<div class="alert alert-danger" role="alert">No Courses Found...</div>
+						{% endif %}
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</section>
+
+{% endblock body %}
+
+{% block javascripts %}
+	<script type="text/javascript" src="{{ baseuri }}/js/jquery.barrating.min.js"></script>
+	{#{% if courses %}
+		<script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+			$(function() {
+				{% for key, course in courses %}
+					$('#course{{ course.id }}Rating').barrating({
+						theme: 'fontawesome-stars-o',
+						initialRating: {% if course.rating is not null %}{{ course.rating }}{% else %}null{% endif %},
+						readonly: true
+					});
+				{% endfor %}
+			});
+		</script>
+	{% endif %}#}
+{% endblock javascripts %}

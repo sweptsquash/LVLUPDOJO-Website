@@ -1,0 +1,35 @@
+{% extends 'acp/base.html' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Remove Course "{{ course.name }}"</h3>
+                </div>
+                <div class="card-body text-center">
+                    {% if success %}
+                        <div class="alert alert-success" role="alert">
+                            Course "{{ course.name }}" removed.
+                        </div>
+                    {% else %}
+                        <form method="POST" enctype="multipart/form-data" action="">
+                            <p>Are you sure you want to remove this course?</p>
+                            <p>
+                                <strong>Note:</strong> Removing a course can not be undone, this will also remove all related lessons and files!
+                            </p>
+                            <button type="submit" class="btn btn-success" name="removeCourse" id="removeCourse">
+                                <i class="fas fa-trash"></i> Yes, Remove Course
+                            </button> 
+                            <a href="{{ rooturi }}/admin/courses/" class="btn btn-danger">
+                                <i class="fas fa-times"></i> No, Cancel
+                            </a>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

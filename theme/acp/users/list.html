@@ -1,0 +1,140 @@
+{% extends 'acp/base.html' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-users"></i> Users</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive mb-2">
+                        <table class="table table-hover table-outline table-vcenter text-nowrap card-table" id="userTable" data-page-length="12" data-order="[[ 0, &quot;asc&quot; ]]">
+                            <thead>
+                                <th class="text-center w-1">&nbsp;</th>
+                                <th>User</th>
+                                <th>Activity</th>
+                                <th>&nbsp;</th>
+                            </thead>
+                            <tbody>
+                                {#{% if users %}
+                                    {% for u in users %}
+                                        <tr>
+                                            <td class="text-center" data-search="{{ u.user_id }}">
+                                                <img src="{% if u.user_avatar is not null %}{{ u.user_avatar }}{% else %}/img/user/User-160x160.png{% endif %}" width="32" height="32" class="rounded-circle" style="max-width:32px !important;" />
+                                            </td>
+                                            <td data-order="{{ u.user_email }}" data-search="{{ u.user_email }}">
+                                                <div>{{ u.user_email }}{% if u.display_name %} ({{ u.display_name }}){% endif %}</div>
+                                                <div class="small text-muted">Registered: {{ u.user_regdate }}</div>
+                                            </td>
+                                            <td data-order="{{ u.user_last_visit_unix }}"{% if u.username %} data-search="{{ u.username }}"{% endif %}>
+                                                <div class="small text-muted">Last Login</div>
+                                                <div>{{ u.user_last_visit }}</div>
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-light" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                        <a href="{{ rooturi }}/admin/users/r/{{ u.user_id }}/" class="dropdown-item">
+                                                            <i class="fas fa-user-lock"></i> Send Password Reset
+                                                        </a>
+                                                        <a href="{{ rooturi }}/admin/users/e/{{ u.user_id }}/" class="dropdown-item">
+                                                            <i class="fas fa-user-edit"></i> Edit
+                                                        </a>
+                                                        <a href="{{ rooturi }}/admin/users/d/{{ u.user_id }}/" class="dropdown-item">
+                                                            <i class="fas fa-user-times"></i> Delete
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr class="table-danger">
+                                        <td colspan="4" class="text-center">
+                                            No Users Found...
+                                        </td>
+                                    </tr>
+                                {% endif %}#}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% if pagination %}
+                        {{ pagination }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="{{ rooturi }}/js/datatables.min.js"></script>
+    <script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+        $(document).ready(function() {
+            $.fn.dataTable.ext.errMode = 'none';
+
+            $('#userTable').on('error.dt', function ( e, settings, techNote, message ) {
+                $('#userTable tbody').empty().append('<tr class="table-danger text-center"><td colspan="4">An error has been reported by DataTables: ' + message + '</td></tr>');
+            }).DataTable({
+                "ajax": "https://www.lvlupdojo.com/api/users/listusers/",
+                "deferRender": true,
+                "lengthMenu": [[12, 25, 50, 100], [12, 25, 50, 100]],
+                "columnDefs": [
+                    {
+                        "targets": 0,
+                        "className": "text-center",
+                        "data": null,
+                        "render": function(data, type, row, meta) {
+                            if(type === 'display') {
+                                return '<img src="' + data.avatar + '" data-uid="' + data.id + '" width="32" height="32" class="rounded-circle" style="max-width:32px !important;" />';
+                            } else if(type === 'filter' || type === 'sort') {
+                                return data.id;
+                            }
+                        }
+                    }, {
+                        "targets": 1,
+                        "orderable": false,
+                        "data": null,
+                        "render": function(data, type, row, meta) {
+                            if(type === 'display') {
+                                return '<div>' + data.username.display + ' - ( ' + data.email + ' )</div><div class="small text-muted">Registered: ' + data.regdate + '</div>';
+                            } else if(type === 'filter') {
+                                return data.email;
+                            } else if(type === 'sort') {
+                                return data.username.display;
+                            }
+                        }
+                    }, {
+                        "targets": 2,
+                        "data": null,
+                        "render": function(data, type, row, meta) {
+                            if(type === 'display') {
+                                return '<div class="small text-muted">Last Login</div><div>' + data.lastvisit.display + '</div>';
+                            } else if(type === 'filter') {
+                                return data.username.search;
+                            } else if( type === 'sort') {
+                                return data.lastvisit.sort;
+                            }
+                        }
+                    }, {
+                        "targets": 3,
+                        "orderable": false,
+                        "data": null,
+                        "className": "text-right",
+                        "render": function(data, type, row, meta) {
+                            if(type === 'display') {
+                                return '<div class="dropdown"><button class="btn btn-light" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button><div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">' + ((data.active) ? '<a href="/admin/users/b/' + data.id + '/" class="dropdown-item"><i class="fas fa-user-slash"></i> Deactivate Account</a>' : '<a href="/admin/users/a/' + data.id + '/" class="dropdown-item"><i class="fas fa-user-check"></i> Reactivate Account</a>') + '<a href="/admin/users/r/' + data.id + '/" class="dropdown-item"><i class="fas fa-user-lock"></i> Send Password Reset</a><a href="/admin/users/e/' + data.id + '/" class="dropdown-item"><i class="fas fa-user-edit"></i> Edit</a><a href="/admin/users/d/' + data.id + '/" class="dropdown-item"><i class="fas fa-user-times"></i> Delete</a></div></div>';
+                            } else if(type === 'filter') {
+                                return data.username.display;
+                            }
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+{% endblock %}

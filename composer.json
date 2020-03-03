@@ -1,0 +1,43 @@
+{
+    "name": "SenFramework/lvlupdojo",
+    "license": "proprietary",
+    "type": "project",
+	"version": "0.2.8",
+	"authors": [
+		{
+            "name": "Senshudo Ltd.",
+            "homepage": "https://www.senshudo.tv",
+            "role": "Contracted"
+        }
+	],
+    "autoload": {
+        "psr-4": {
+			"SenFramework\\": "vendor/SenFramework/",
+            "Monolog\\": "vendor/monolog/monolog/src/Monolog/",
+			"Twig_\\": "vendor/twig/twig/lib/",
+			"ReCaptcha\\": "vendor/google/recaptcha/src/ReCaptcha",
+			"Authenticator\\": "vendor/google/Authenticator/",
+			"PhpZip\\": "vendor/PhpZip/"
+        }
+    },
+	"require": {
+		"php": "^7.0",
+		"abraham/twitteroauth": "*",
+		"dompdf/dompdf": "*",
+		"google/recaptcha": "~1.1",
+		"guzzlehttp/psr7": "*",
+		"facebook/graph-sdk": "^5.6",
+		"league/oauth2-client": "*",
+		"mandrill/mandrill": "*",
+		"monolog/monolog": "1.*",
+		"paypal/rest-api-sdk-php": "*",
+		"php-http/curl-client": "*",
+		"phpmailer/phpmailer": "~6.0",
+		"restcord/restcord": "*",
+		"react/promise": "*",
+		"stripe/stripe-php": "*",
+		"twig/twig": "*",
+		"webonyx/graphql-php": "*",
+		"wohali/oauth2-discord-new": "*"
+    }
+}

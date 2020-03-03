@@ -1,0 +1,67 @@
+{% extends 'acp/base.html' %}
+
+{% block body %}
+	<div class="page-header">
+		<h1 class="page-title">
+			Courses
+		</h1>
+    </div>
+
+	<div class="row row-cards row-deck">
+		{% if courses %}
+            {% for key, course in courses %}
+                <div class="col-md-4">
+                    <div class="card course m-2" id="course{{ course.id }}">
+                        <div class="card-image">
+                            <img class="card-img-top" src="{{ baseuri }}{{ course.thumbnail }}" alt="{{ course.name }}" />
+                            <div class="card-img-overlay">
+                                <h5 class="card-title mb-0">{{ course.name }}</h5>
+                            </div>
+                        </div>
+                        <div class="card-body text-dark">
+                            <div class="row mb-3">
+                                <div class="col-sm-12 col-md-8">
+                                    <i class="fas fa-calendar-alt"></i> {% if course.published == 1 %}Published{% else %}Created{% endif %}: {{ course.publishDate }}
+                                </div>
+                                <div class="col-sm-12 col-md-4 text-right">
+                                    {% if course.published == 1 %}
+                                        <span class="badge badge-pill badge-primary">Published</span>
+                                    {% else %}
+                                        <span class="badge badge-pill badge-danger">Not Published</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row mb-0">
+                                <div class="col-sm-12 col-md-4">
+                                    <a href="{{ rooturi }}/admin/courses/e/{{ course.id }}/" class="btn btn-block btn-success">
+                                        <i class="fas fa-pencil"></i> Edit
+                                    </a>
+                                </div>
+                                <div class="col-sm-12 col-md-4">
+                                    <a href="{{ rooturi }}/courses/preview/{{ course.id }}/" class="btn btn-block btn-primary">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>
+                                </div>
+                                <div class="col-sm-12 col-md-4">
+                                    <a href="{{ rooturi }}/admin/courses/d/{{ course.id }}/" class="btn btn-block btn-danger">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            
+            {% if pagination %}
+                <div class="col-md-12">{{ pagination }}</div>
+            {% endif %}
+        {% else %}
+            <div class="col-md-12">
+                <div class="alert alert-danger" role="alert">No Courses Found...</div>
+            </div>
+        {% endif %}
+	</div>	
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

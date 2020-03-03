@@ -1,0 +1,67 @@
+DirectoryIndex index.php app.php index.html
+
+<IfModule mod_negotiation.c>
+    Options +FollowSymlinks
+    Options -MultiViews
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+	RewriteCond %{HTTP_HOST} !^www\. [NC]
+	RewriteRule ^(.*)$ https://www.lvlupdojo.com/$1 [R=301,L]
+	
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://www.lvlupdojo.com/$1 [R=301,L]
+	
+	RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ app.php [QSA,L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    <IfModule mod_alias.c>
+        RedirectMatch 302 ^/$ /app.php/
+    </IfModule>
+</IfModule>
+
+<IfModule mod_version.c>
+	<IfVersion < 2.4>
+		<Files "init.php">
+			Order Allow,Deny
+			Deny from All
+		</Files>
+		<Files "routing.json">
+			Order Allow,Deny
+			Deny from All
+		</Files>
+	</IfVersion>
+	<IfVersion >= 2.4>
+		<Files "init.php">
+			Require all denied
+		</Files>
+		<Files "routing.json">
+			Require all denied
+		</Files>
+	</IfVersion>
+</IfModule>
+<IfModule !mod_version.c>
+	<IfModule !mod_authz_core.c>
+		<Files "init.php">
+			Order Allow,Deny
+			Deny from All
+		</Files>
+		<Files "routing.json">
+			Order Allow,Deny
+			Deny from All
+		</Files>
+	</IfModule>
+	<IfModule mod_authz_core.c>
+		<Files "init.php">
+			Require all denied
+		</Files>
+		<Files "routing.json">
+			Require all denied
+		</Files>
+	</IfModule>
+</IfModule>

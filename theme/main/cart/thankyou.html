@@ -1,0 +1,77 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+    <header class="parallax-banner small-banner header-shadow bg-dark-grey">
+        <div class="image" style="background-image:url({{ baseuri }}{{ config.default_banner }});"></div>
+        <div class="container">
+            <div class="row pb-5 mb-5">
+                <div class="col-12 text-center pb-5 mb-5">
+                    <h2><i class="fas fa-shopping-cart"></i> Order Complete</h2>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="bg-white diagonal-open-dark light py-5 clip-path-fix text-dark">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="swal-icon swal-icon--success">
+                        <span class="swal-icon--success__line swal-icon--success__line--long"></span>
+                        <span class="swal-icon--success__line swal-icon--success__line--tip"></span>
+                    
+                        <div class="swal-icon--success__ring"></div>
+                        <div class="swal-icon--success__hide-corners"></div>
+                    </div>
+                    <h3 class="mt-5">Thank you for your order.</h3>
+                    <p>Order <strong>{{ invoice_number }}</strong> processed.</p>
+                    <p><a href="{{ baseuri }}/dashboard/" rel="noopener">Click Here</a> to go to your Course Library.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+        $(function() {
+            if(typeof fbq == 'function') {
+                var paymentDetails = {
+                    amount: {
+                        total: '{{ total }}',
+                        currency: 'USD'
+                    },
+                    itemIDs: [
+                        {% if items|length > 0 %}
+                            {% for item in cart.items %}
+                                '{{ item.id }}',
+                            {% endfor %}
+                        {% endif %}
+                    ],
+                    items: [
+                        {% if items|length > 0 %}
+                            {% for item in cart.items %}
+                                {
+                                    name: '{{ item.name }}',
+                                    sku: '{{ item.id }}',
+                                    price: '{% if item.cost.discount is not null %}{{ item.cost.discount_value }}{% else %}{{ item.cost.price }}{% endif %}',
+                                    currency: '{{ item.cost.currency }}',
+                                    quantity: '1'
+                                },
+                            {% endfor %}
+                        {% endif %}
+                    ]
+                };
+
+                fbq('track', 'Purchase', {
+                    value: paymentDetails.amount.total,
+                    currency: paymentDetails.amount.currency,
+                    num_items: paymentDetails.items.length,
+                    content_type: 'product',
+                    content_ids: paymentDetails.itemIDs,
+                    contents: paymentDetails.items
+                });
+            }
+        });
+    </script>
+{% endblock %}

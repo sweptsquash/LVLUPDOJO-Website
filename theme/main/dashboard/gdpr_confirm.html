@@ -1,0 +1,61 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<header class="parallax-banner small-banner header-shadow bg-dark-grey">
+		<div class="image"  style="background-image:url('{{ baseuri }}{{ config.default_banner }}');"></div>
+		<div class="container">
+			<div class="row pb-5 mb-5">
+				<div class="col-12 text-center pb-5 mb-5">
+					<h1>Account Management</h1>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="bg-white diagonal-open-dark text-dark py-5 clip-path-fix">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3">
+					<div class="list-group">
+						<a href="{{ baseuri }}/dashboard/" class="list-group-item list-group-item-action">
+							<i class="fas fa-book"></i> My Courses
+						</a>
+						<a href="{{ baseuri }}/dashboard/account/" class="list-group-item list-group-item-action">
+							<i class="fas fa-user"></i> Account
+						</a>
+						<a href="{{ baseuri }}/dashboard/remove/" class="list-group-item list-group-item-action active">
+							<i class="fas fa-user-times"></i> Delete Account
+						</a>
+						<a href="{{ baseuri }}/dashboard/security/" class="list-group-item list-group-item-action">
+							<i class="fas fa-shield-alt"></i> Security
+						</a>
+						<a href="{{ baseuri }}/dashboard/billing/" class="list-group-item list-group-item-action">
+							<i class="fas fa-credit-card"></i> Billing
+						</a>
+						<a href="{{ baseuri }}/dashboard/connections/" class="list-group-item list-group-item-action">
+							<i class="fas fa-link"></i> Connections
+						</a>
+					</div>
+				</div>
+				<div class="col-md-9">
+                    <form class="needs-validation" name="accountForm" id="accountForm" method="post" action="">
+                        <div class="alert alert-info" role="alert">
+                            <p>Are you sure you want to delete your account?</p>
+                            <p>
+                                <strong>Note:</strong> This action can not be undone! This will remove all related information for your account from the system.
+                            </p>
+                        </div>
+                        <button type="submit" class="btn btn-success" name="confirm" id="confirm">
+                            <i class="fas fa-trash"></i> Yes, Remove Account
+                        </button> 
+                        <a href="{{ baseuri }}/dashboard/account/" class="btn btn-danger">
+                            <i class="fas fa-times"></i> No, Cancel
+                        </a>
+                    </form>
+                </div>
+            </div>		
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

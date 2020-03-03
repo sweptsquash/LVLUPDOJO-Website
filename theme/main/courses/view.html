@@ -1,0 +1,463 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<header class="parallax-banner header-shadow bg-dark-grey">
+		<div class="image" style="background-position: top center; background-image:url('{{ baseuri }}{% if product.banner is not null %}{{ product.banner }}{% else %}{{ config.default_banner }}{% endif %}');"></div>
+		<div class="container">
+			<div class="row pb-5 mb-5">
+				<div class="col-7 pb-5 mb-5">
+					<h1 id="courseTitle">{{ product.name }}</h1>
+					<p>
+						<select id="courseRating">
+							<option value=""></option>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+						</select>
+						<a href="#reviews" title="{{ product.reviewCount }} Reviews" class="text-light">( {{ product.reviewCount }} Reviews )</a>
+					</p>
+					<p>
+						<strong>Mentor:</strong> <a href="{{ baseuri }}/courses/m/{{ product.mentor.slug }}/" class="text-light">{{ product.mentor.name }}</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="bg-grey diagonal-open-dark light text-dark py-5 clip-path-fix">
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-12 col-sm-8 col-md-8">
+					{% if noaccess is not null %}
+						<div role="alert" class="alert alert-contrast alert-danger">
+							<div class="icon">
+								<i class="far fa-times"></i>
+							</div>
+							<div class="message">
+								You do not have access to this course, consider getting a subscription or buying this course to view this material.
+							</div>
+						</div>
+					{% endif %}
+					<h2>Description</h2>
+					{{ product.description }}
+					<h3 class="h2">Curriculum For This Course</h3>
+					{% for key, lesson in product.lessons %}
+						{% if lesson.type == 3 or lesson.type == 5 %}
+							<a href="{% if lesson.unlocked %}/courses/{% if preview %}preview/{% endif %}{{ product.slug }}/download/{% if lesson.type == 5 %}course{% else %}lesson{% endif %}-book{% if lesson.type == 3 %}-{{ lesson.slug }}{% endif %}/{% else %}#{% endif %}"{% if lesson.unlocked %}target="_blank"{% endif %} class="card mb-2"{% if lesson.unlocked == false %}{% if ((user.is_registered == false or user.is_registered == true) and product.owned == false) %} data-toggle="modal" data-target="#{% if user.is_registered == false %}connectionModal{% else %}purchaseModal{% endif %}"{% endif %}{% endif %}>
+								<div class="card-header">
+									<h5 class="mb-0 h6">
+										<i class="fas fa-{% if lesson.unlocked == false %}lock{% else %}file{% endif %}"></i> {% if lesson.type == 3 %}Lesson{% elseif lesson.type == 5 %}Course{% endif %} Workbook: {{ lesson.name }}
+									</h5>
+								</div>
+							</a>
+						{% else %}
+							<a href="{% if lesson.unlocked %}{{ baseuri }}/courses/{% if preview %}preview/{% endif %}{{ product.slug }}/l/{{ lesson.slug }}/{% else %}#{% endif %}" class="card flex-row course-lesson mb-2{% if lesson.unlocked == false %} locked{% endif %}"{% if lesson.unlocked and lesson.name == 'Intro' %} data-toggle="modal" data-target="#videoModal"{% endif %}{% if lesson.unlocked == false %}{% if ((user.is_registered == false or user.is_registered == true) and product.owned == false) %} data-toggle="modal" data-target="#{% if user.is_registered == false %}connectionModal{% else %}purchaseModal{% endif %}"{% endif %}{% endif %}>
+								<div class="card-img-top">
+									<img src="{{ lesson.thumbnail }}" alt="{% if lesson.name != 'Intro' and lesson.name != 'Outro' %}Lesson {{ lesson.orderNo }}: {% endif %}{{ lesson.name }}" />
+									<span class="badge badge-pill badge-secondary">{{ lesson.duration }}</span>
+								</div>
+								<div class="card-body p-0">
+									<h5 class="card-title p-2 mb-0 h6">{% if lesson.name != 'Intro' and lesson.name != 'Outro' %}Lesson: {% endif %}{{ lesson.name }}</h5>
+									<div class="p-2">
+										<p class="card-text">{{ lesson.excerpt }}</p>
+									</div>
+								</div>
+							</a>
+							{% if lesson.resources %}
+								{% for rkey, resource in lesson.resources %}
+									<a href="{% if resource.unlocked %}{{ baseuri }}/courses/{% if preview %}preview/{% endif %}{{ product.slug }}/download/{% if resource.type == 5 %}course{% else %}lesson{% endif %}-book{% if resource.type == 3 %}-{{ lesson.slug }}{% endif %}/{% else %}#{% endif %}"{% if resource.unlocked %}target="_blank"{% endif %} class="card mb-2"{% if resource.unlocked == false %}{% if ((user.is_registered == false or user.is_registered == true) and product.owned == false) %} data-toggle="modal" data-target="#{% if user.is_registered == false %}connectionModal{% else %}purchaseModal{% endif %}"{% endif %}{% endif %}>
+										<div class="card-header">
+											<h5 class="mb-0 h6">
+												<i class="fas fa-{% if resource.unlocked == false %}lock{% else %}file{% endif %}"></i> {% if resource.type == 3 %}Lesson{% elseif resource.type == 5 %}Course{% endif %} Workbook: {{ resource.name }}
+											</h5>
+										</div>
+									</a>
+								{% endfor %}
+							{% endif %}
+						{% endif %}
+					{% endfor %}
+					<div class="card mb-3">
+						<div class="card-header">
+							<h4 class="h2 m-0">About the Mentor</h4>
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-3">
+									<a href="{{ baseuri }}/courses/m/{{ product.mentor.slug }}/" class="text-dark">
+										<img src="{{ baseuri }}{{ product.mentor.avatar }}" height="" width="" alt="{{ product.mentor.name }}" class="mb-2 img-thumbnail img-fluid" />
+									</a>
+								</div>
+								<div class="col-9">
+									{{ product.mentor.about }}
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card mb-3">
+						<div class="card-header">
+							<h4 class="h2 m-0">Student Feedback</h4>
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-3 pt-2 text-center">
+									<p class="h1">{{ product.rating|number_format(1) }}</p>
+									<select id="courseAvgRating">
+										<option value=""></option>
+										<option value="1">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+										<option value="5">5</option>
+									</select>
+									<p class="text-muted">
+										<small>Rating</small>
+									</p>
+								</div>
+								<div class="col-9 review-ratings">
+									<div class="row">
+										<div class="col-7">
+											<div class="progress" style="height:21px;">
+												<div class="progress-bar" style="width:{{ product.scoring[5]|number_format(2) }}%;" role="progressbar" aria-valuenow="{{ product.scoring[5] }}" aria-valuemin="0" aria-valuemax="100"></div>
+											</div>
+										</div>
+										<div class="col-5">
+											<select id="reviewFiveStarRating">
+												<option value="1">1</option>
+												<option value="2">2</option>
+												<option value="3">3</option>
+												<option value="4">4</option>
+												<option value="5" selected>5</option>
+											</select> {{ product.scoring[5]|number_format(0) }}%
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-7">
+											<div class="progress" style="height:21px;">
+												<div class="progress-bar" style="width:{{ product.scoring[4]|number_format(2) }}%;" role="progressbar" aria-valuenow="{{ product.scoring[4] }}" aria-valuemin="0" aria-valuemax="100"></div>
+											</div>
+										</div>
+										<div class="col-5">
+											<select id="reviewFourStarRating">
+												<option value="1">1</option>
+												<option value="2">2</option>
+												<option value="3">3</option>
+												<option value="4" selected>4</option>
+												<option value="5">5</option>
+											</select> {{ product.scoring[4]|number_format(0) }}%
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-7">
+											<div class="progress" style="height:21px;">
+												<div class="progress-bar" style="width:{{ product.scoring[3]|number_format(2) }}%;" role="progressbar" aria-valuenow="{{ product.scoring[3] }}" aria-valuemin="0" aria-valuemax="100"></div>
+											</div>
+										</div>
+										<div class="col-5">
+											<select id="reviewThreeStarRating">
+												<option value="1">1</option>
+												<option value="2">2</option>
+												<option value="3" selected>3</option>
+												<option value="4">4</option>
+												<option value="5">5</option>
+											</select> {{ product.scoring[3]|number_format(0) }}%
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-7">
+											<div class="progress" style="height:21px;">
+												<div class="progress-bar" style="width:{{ product.scoring[2]|number_format(2) }}%;" role="progressbar" aria-valuenow="{{ product.scoring[2] }}" aria-valuemin="0" aria-valuemax="100"></div>
+											</div>
+										</div>
+										<div class="col-5">
+											<select id="reviewTwoStarRating">
+												<option value="1">1</option>
+												<option value="2" selected>2</option>
+												<option value="3">3</option>
+												<option value="4">4</option>
+												<option value="5">5</option>
+											</select> {{ product.scoring[2]|number_format(0) }}%
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-7">
+											<div class="progress" style="height:21px;">
+												<div class="progress-bar" style="width:{{ product.scoring[1]|number_format(2) }}%;" role="progressbar" aria-valuenow="{{ product.scoring[1] }}" aria-valuemin="0" aria-valuemax="100"></div>
+											</div>
+										</div>
+										<div class="col-5">
+											<select id="reviewOneStarRating">
+												<option value="1" selected>1</option>
+												<option value="2">2</option>
+												<option value="3">3</option>
+												<option value="4">4</option>
+												<option value="5">5</option>
+											</select> {{ product.scoring[1]|number_format(0) }}%
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>			
+					{% if user.is_registered == true and product.owned == true %}
+						{% if product.reviewed == false %}
+							<div class="card mb-3">
+								<div class="card-header">
+									<h4 class="h2 m-0" id="writeReview">Leave A Review</h4>
+								</div>
+								<div class="card-body">
+									<form name="reviewForm" id="reviewForm" method="post" action="">
+										<div class="form-group">
+											<label class="col-form-label">How would you rate this course overall?</label>
+											<select name="course_rating" id="reviewRating">
+												<option value=""></option>
+												<option value="1">1</option>
+												<option value="2">2</option>
+												<option value="3">3</option>
+												<option value="4">4</option>
+												<option value="5">5</option>
+											</select>
+										</div>
+										<div class="form-group">
+											<label for="review" class="col-form-label">Write your review</label>
+											<textarea class="form-control" rows="10" name="review" id="review"></textarea>
+										</div>
+										<div class="form-group mb-0 text-center">
+											<input type="hidden" name="course" id="course" value="{{ product.id }}" />
+											<button type="submit" name="submitReview" id="submitReview" class="btn btn-primary p-3">
+												Submit Review
+											</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						{% endif %}
+					{% endif %}					
+					<h6 class="h2" id="reviews">Reviews</h6>
+					{% if product.reviews is null %}
+						<div class="alert alert-danger" role="alert">
+							<i class="far fa-frown"></i> No reviews yet, be the first to review this course.
+						</div>
+					{% else %}
+						{% for key, review in product.reviews %}
+							<div class="card mb-3">
+								<div class="card-body">
+									<div class="row">
+										<div class="col-md-3 text-center">
+											<img src="{{ baseuri }}{% if review.avatar is null %}/img/user/User-160x160.png{% else %}{{ review.avatar }}{% endif %}" width="64" height="64" class="rounded-circle mb-2" alt="{{ review.name }}" />
+											<p>{{ review.name }}</p>
+											<select id="review{{ key }}Rating">
+												<option value=""></option>
+												<option value="1">1</option>
+												<option value="2">2</option>
+												<option value="3">3</option>
+												<option value="4">4</option>
+												<option value="5">5</option>
+											</select>
+										</div>
+										<div class="col-md-9">
+											<p>{{ review.review }}</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+					{% endif %}
+				</div>
+				<div class="col-xs-12 col-sm-4 col-md-4">
+					<div class="right-module p-1">
+						<div class="video-placeholder" style="background-image:url('{{ baseuri }}{{ product.intro.thumbnail }}');" data-toggle="modal" data-target="#videoModal"></div>
+						<div class="pt-2 pr-3 pb-2 pl-3">
+							{% if ((user.is_registered == false or user.is_registered == true) and product.owned == false) %}
+								<p class="text-right">
+									{% if product.cost.discount is not null %}
+										<small>
+											<s>${{ product.cost.price }}</s>
+										</small> <strong class="h2">$<span id="courseCost">{{ product.cost.discount_value }}</span></strong>
+									{% else %}
+										<strong class="h2">$<span id="courseCost">{{ product.cost.price }}</span></strong>
+									{% endif %}
+								</p>
+								<button type="button" name="purchaseCourse" id="purchaseCourse" data-item="{{ product.id }}" data-action="{% if product.inCart %}removeItem{% else %}addItem{% endif %}" class="btn btn-primary btn-block p-3">
+									<i class="fas fa-shopping-cart"></i> {% if product.inCart %}Remove From Cart{% else %}Add To Cart{% endif %}
+								</button>
+								{% for key, option in pricing %}
+									{% if option.slug != 'free' %}
+										<a href="{{ baseuri }}{% if user.is_registered == false %}/sign-up/{{ option.slug }}/{% else %}/dashboard/billing/upgrade/{{ option.slug }}{% endif %}" class="btn btn-block btn-outline-primary p-3">
+											{{ option.name }} (${{ option.cost }})
+										</a>
+									{% endif %}
+								{% endfor %}
+								<p class="text-muted text-center mb-2">
+									<small>30-Day Money-Back Guarantee</small>
+								</p>
+							{% else %}
+								<div class="progress mb-2">
+									<div class="progress-bar" role="progressbar" style="width: {{ product.progress.percent }}%;" aria-valuenow="{{ product.progress.percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+								<a href="{{ baseuri }}/courses/{% if preview %}preview/{% endif %}{{ product.slug }}/l/{{ product.progress.lesson }}/" class="btn btn-primary btn-block p-3 mb-2">
+									{% if product.progress.new %}Begin Course{% else %}Continue Course{% endif %}
+								</a>
+								{% if product.lessonWorkbook > 0 or product.courseWorkbook > 0  %}
+									<a href="{{ baseuri }}/courses/{% if preview %}preview/{% endif %}{{ product.slug }}/download/assets/" target="_blank" class="btn btn-block btn-outline-primary p-3 mb-2">
+										Download Lesson Resources
+									</a>
+								{% endif %}
+								{% if product.reviewed == false %}
+									<a href="#writeReview" class="btn btn-block btn-outline-primary p-3 mb-2">
+										Review &amp; Rate Course
+									</a>
+								{% endif %}
+							{% endif %}
+							<p class="mb-2">
+								<strong>Includes:</strong>
+							</p>
+							<ul class="list-unstyled pl-3">
+								<li class="mb-2">
+									<i class="far fa-clock mr-2"></i> {{ product.hours }} hours on-demand video
+								</li>
+								<li class="mb-2">
+									<i class="fas fa-key mr-2"></i> Lifetime access
+								</li>
+								{% if product.lessonWorkbook > 0 %}
+									<li class="mb-2">
+										<i class="fas fa-file mr-2"></i> {{ product.lessonWorkbook }} Lesson Workbook{% if product.lessonWorkbook > 1 %}s{% endif %}
+									</li>
+								{% endif %}
+								{% if product.courseWorkbook > 0 %}
+									<li class="mb-2">
+										<i class="fas fa-file-pdf mr-2"></i> {{ product.courseWorkbook }} Course Workbook{% if product.courseWorkbook > 1 %}s{% endif %}
+									</li>
+								{% endif %}	
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<div class="modal modal-video fade" id="videoModal" tabindex="-1" role="dialog" aria-hidden="true">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">×</span>
+		</button>
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="embed-responsive embed-responsive-16by9">
+					<iframe class="embed-responsive-item" src="{{ product.intro.source }}" allowfullscreen></iframe>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+{% endblock %}
+
+{% block javascripts %}
+	<script src="https://player.vimeo.com/api/player.js"></script>
+	<script type="text/javascript" src="{{ baseuri }}/js/jquery.barrating.min.js"></script>
+	<script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+		$(function() {
+			var iframe = document.querySelector('iframe');
+			var player = new Vimeo.Player(iframe);
+
+			$('#videoModal').on('shown.bs.modal', function (e) {
+				player.play();
+				
+				if(typeof gtag === 'function') {
+					gtag('event', 'video_auto_play_start', {
+						'event_label': '{{ product.name }} Intro Video',
+						'event_category': 'video_auto_play',
+						'non_interaction': true
+					});
+				}
+			});
+
+			$('#videoModal').on('hide.bs.modal', function (e) {
+				player.pause();
+			});
+
+			$('#reviewForm').submit(function(e) {
+				e.preventDefault();
+
+				var payload = new FormData($(this)[0]);
+
+				$.ajax({
+					type: "POST",
+					url: baseuri + '/api/course/review/',
+					data: payload,
+					contentType: false,
+					cache: false,
+					processData: false,
+					dataType: "json"
+				}).done(function(data) {
+					if(data.result == 'success') {
+						$('<div class="alert alert-success" role="alert">Review submitted, thank you :)</div>').insertBefore('#reviewForm');
+						$('#reviewForm').remove();
+					} else {
+						$('<div class="alert alert-danger" role="alert">Error: ' +data.message+'</div>').insertBefore('#reviewForm');
+					}
+				}).fail(function(data) {
+					$('<div class="alert alert-danger" role="alert">Error: ' +data.message+'</div>').insertBefore('#reviewForm');
+				});
+			});
+
+			$('#courseRating').barrating({
+				theme: 'fontawesome-stars-o',
+				initialRating: {% if product.rating is not null %}{{ product.rating }}{% else %}null{% endif %},
+				readonly: true
+			});
+
+			$('#courseAvgRating').barrating({
+				theme: 'fontawesome-stars-o',
+				initialRating: {% if product.rating is not null %}{{ product.rating }}{% else %}null{% endif %},
+				readonly: true
+			});
+
+			$('#reviewFiveStarRating').barrating({
+				theme: 'fontawesome-stars-o',
+				initialRating: 5,
+				readonly: true
+			});
+
+			$('#reviewFourStarRating').barrating({
+				theme: 'fontawesome-stars-o',
+				initialRating: 4,
+				readonly: true
+			});
+
+			$('#reviewThreeStarRating').barrating({
+				theme: 'fontawesome-stars-o',
+				initialRating: 3,
+				readonly: true
+			});
+
+			$('#reviewTwoStarRating').barrating({
+				theme: 'fontawesome-stars-o',
+				initialRating: 2,
+				readonly: true
+			});
+
+			$('#reviewOneStarRating').barrating({
+				theme: 'fontawesome-stars-o',
+				initialRating: 1,
+				readonly: true
+			});
+
+			$('#reviewRating').barrating({
+				theme: 'fontawesome-stars-o',
+				initialRating: null
+			});
+
+			{% if product.reviews is not null %}
+				{% for key, review in product.reviews %}
+					$('#review{{ key }}Rating').barrating({
+						theme: 'fontawesome-stars-o',
+						initialRating: {{ review.rating }},
+						readonly: true
+					});
+				{% endfor %}
+			{% endif %}
+		});
+	</script>
+{% endblock %}

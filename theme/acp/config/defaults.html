@@ -1,0 +1,140 @@
+{% extends 'acp/base.html' %}
+
+{% block stylesheets %}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <form method="POST" enctype="multipart/form-data" action="" class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Default Settings</h3>
+                </div>
+                <div class="card-body">
+                        {% if success %}
+                            <div class="alert alert-success" role="alert">
+                                Default settings updated.
+                            </div>
+                        {% endif %}
+                        <div class="form-group">
+                            <label for="contact" class="col-form-label">Contact Email Address</label>
+                            <input type="text" class="form-control" name="contact" id="contact" value="{{ config.contact_email }}" />
+                        </div>
+                        <div class="form-group">
+                            <label for="company" class="col-form-label">Company Address</label>
+                            <textarea class="form-control" name="company" id="company" rows="10">{{ config.company_address }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="bannerUpload" class="col-form-label required">Default Banner</label>
+                            <input type="file" name="bannerUpload" id="bannerUpload" />
+                            <p class="text-muted">
+                                <small>Image must be 1920 (width) x 1080 (height), JPG or PNG and less than 12MB in size.</small>                            
+                            </p>
+                        </div>
+                        <div class="form-group">
+                            <label for="homeBanner" class="col-form-label required">Home Banner</label>
+                            <input type="file" name="bannerUpload" id="homeBanner" />
+                            <p class="text-muted">
+                                <small>Image must be 1920 (width) x 1080 (height), JPG or PNG and less than 12MB in size.</small>                            
+                            </p>
+                        </div>
+                </div>
+                <div class="card-footer text-center">
+                        <input type="hidden" name="bannerFile" id="bannerFile" value="{{ config.default_banner }}" />
+                        <input type="hidden" name="homeFile" id="homeFile" value="{{ config.home_banner }}" />
+                    <a href="{{ baseuri }}/admin/" class="btn btn-danger">
+                        <i class="far fa-times"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-success" name="updateConfig" id="updateConfig">
+                        <i class="far fa-save"></i> Update Config                     
+                    </button>
+                </div>
+            </form>
+        </div>        
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="{{ baseuri }}/js/filepond.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/filepond.plugin.preview.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/filepond.plugin.filesize.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/filepond.plugin.filetype.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/jquery.filepond.min.js"></script>
+    <script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+        $(function() {
+            $.fn.filepond.registerPlugin(
+                FilePondPluginImagePreview,
+                FilePondPluginFileValidateSize,
+                FilePondPluginFileValidateType
+            );
+
+            $.fn.filepond.setDefaults({
+                maxFileSize: '12MB',
+                acceptedFileTypes: [
+                    'image/png',
+                    'image/jpeg'
+                ],
+                labelIdle: 'Drag & Drop your picture or <span class="filepond--label-action">Browse</span>'
+            });
+
+            $('#bannerUpload').filepond({
+                allowMultiple: false,
+                instantUpload: true,
+                class: 'filepond-thumbnail',
+                required: true,
+                server: {
+                    url: baseuri + '/FilePond.php'                        
+                },   
+                {% if config.default_banner %}
+                    files: [{
+                        source: '{{ config.default_banner }}',
+                        options: {
+                            type: '{{ config.default_banner_type }}'
+                        }
+                    }],
+                {% endif %}
+                onaddfile: function(error, file) {
+                    file.setMetadata('method', 'avatar');
+                },
+                onprocessfile: function(error, file) {
+                    $('input[name="bannerFile"]').val(file.serverId);
+                },
+                onprocessfileundo: function(file) {
+                    $('input[name="bannerFile"]').val('');
+                },
+                onremovefile: function(file) {
+                    $('input[name="bannerFile"]').val('');
+                }
+            });
+
+             $('#homeBanner').filepond({
+                allowMultiple: false,
+                instantUpload: true,
+                class: 'filepond-thumbnail',
+                required: true,
+                server: {
+                    url: baseuri + '/FilePond.php'                        
+                },   
+                {% if config.home_banner %}
+                    files: [{
+                        source: '{{ config.home_banner }}',
+                        options: {
+                            type: '{{ config.home_banner_type }}'
+                        }
+                    }],
+                {% endif %}
+                onaddfile: function(error, file) {
+                    file.setMetadata('method', 'avatar');
+                },
+                onprocessfile: function(error, file) {
+                    $('input[name="homeFile"]').val(file.serverId);
+                },
+                onprocessfileundo: function(file) {
+                    $('input[name="homeFile"]').val('');
+                },
+                onremovefile: function(file) {
+                    $('input[name="homeFile"]').val('');
+                }
+            });
+        });
+    </script>
+{% endblock %}

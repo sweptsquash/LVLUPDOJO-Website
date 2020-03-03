@@ -1,0 +1,112 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<header class="parallax-banner small-banner header-shadow bg-dark-grey">
+		<div class="image"  style="background-image:url('{{ baseuri }}{{ config.default_banner }}');"></div>
+		<div class="container">
+			<div class="row pb-5 mb-5">
+				<div class="col-12 text-center pb-5 mb-5">
+					<h1>My Courses</h1>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="bg-white diagonal-open-dark text-dark py-5 clip-path-fix">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3">
+					<div class="list-group">
+						<a href="{{ baseuri }}/dashboard/" class="list-group-item list-group-item-action active">
+							<i class="fas fa-book"></i> My Courses
+						</a>
+						<a href="{{ baseuri }}/dashboard/account/" class="list-group-item list-group-item-action">
+							<i class="fas fa-user"></i> Account
+						</a>
+						<a href="{{ baseuri }}/dashboard/remove/" class="list-group-item list-group-item-action">
+							<i class="fas fa-user-times"></i> Delete Account
+						</a>
+						<a href="{{ baseuri }}/dashboard/security/" class="list-group-item list-group-item-action">
+							<i class="fas fa-shield-alt"></i> Security
+						</a>
+						<a href="{{ baseuri }}/dashboard/billing/" class="list-group-item list-group-item-action">
+							<i class="fas fa-credit-card"></i> Billing
+						</a>
+						<a href="{{ baseuri }}/dashboard/connections/" class="list-group-item list-group-item-action">
+							<i class="fas fa-link"></i> Connections
+						</a>
+					</div>
+				</div>
+				<div class="col-md-9">
+					{% if courses %}
+						{% set offset = 0 %}
+					
+						{% for key, course in courses %}
+							{% if offset == 0 %}
+								<div class="card-deck mb-2">
+							{% endif %}
+									
+								<a href="{{ baseuri }}/courses/{{ course.slug }}/" class="card course m-2" id="course{{ course.id }}">
+									<div>
+										<img class="card-img-top" src="{{ baseuri }}{{ course.thumbnail }}" alt="{{ course.name }}" />
+										<div class="title-container">
+											<h5 class="card-title mb-1">{{ course.name }}</h5>
+										</div>
+										<div class="progress">
+											<div class="progress-bar" role="progressbar" style="width: {% if course.progress is null %}0{% else %}{{ course.progress.percent }}{% endif %}%;" aria-valuenow="{% if course.progress is null %}0{% else %}{{ course.progress.percent }}{% endif %}" aria-valuemin="0" aria-valuemax="100"></div>
+										</div>
+									</div>
+									<div class="card-body text-dark">								
+										{% if course.categories %}
+											{% for ckey, category in course.categories %}
+												<span class="badge badge-{{ category.class }} p-2">
+													{% if category.icon is not null %}
+														<i class="{{ category.icon }}"></i> 
+													{% endif %}{{ category.name }}
+												</span>
+											{% endfor %}
+										{% endif %}
+										<p class="mt-2 mb-0">
+											{{ course.excerpt }}
+										</p>
+									</div>
+								</a>
+									
+							{% set offset = offset + 1 %}
+							{% if offset == 3 %}
+								</div>
+								{% set offset = 0 %}
+							{% endif %}
+						{% endfor %}
+						{% if (not offset == 0) and (offset < 3) %}
+							</div>									
+						{% endif %}
+					
+						{% if pagination %}
+							{{ pagination }}
+						{% endif %}
+					{% else %}
+						<div class="alert alert-danger" role="alert">No Courses Owned...</div>
+					{% endif %}
+				</div>
+			</div>		
+		</div>
+	</section>
+{% endblock %}
+
+{% block javascripts %}
+	<script type="text/javascript" src="{{ baseuri }}/js/jquery.barrating.min.js"></script>
+	{% if courses %}
+		<script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+			$(function() {
+				{% for key, course in courses %}
+					$('#course{{ course.id }}Rating').barrating({
+						theme: 'fontawesome-stars-o',
+						initialRating: {% if course.rating is not null %}{{ course.rating }}{% else %}null{% endif %},
+						readonly: true
+					});
+				{% endfor %}
+			});
+		</script>
+	{% endif %}
+{% endblock %}

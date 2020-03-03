@@ -1,0 +1,30 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<section class="banner banner-grey header-shadow" style="background-image:url({{ baseuri }}/img/Ninja-B12.png);">
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					<h2 class="h1 mb-3 text-center">{{ type }}</h2>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="bg-grey diagonal-open-dark light text-dark pt-5 pb-5">
+		<div class="container">
+			<div class="row">
+				<div class="col-12 text-center">
+					<h2>{{ title }}</h2>
+					<p class="lead">{{ message }}</p>
+					<p>
+						<a href="{{ baseuri }}" class="btn btn-primary">Homepage</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>	
+{% endblock %}
+
+{% block javascripts %}
+	
+{% endblock %}

@@ -1,0 +1,262 @@
+{% extends 'acp/base.html' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-user"></i> User Activity</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">User ID</label>
+                        <p>{{ u.user_id }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Registered</label>
+                        <p>{{ u.user_regdate }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Active</label>
+                        <p>{{ u.user_last_visit }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Failed Login Attempts</label>
+                        <p>{{ u.user_login_attempts }}</p>
+                    </div>
+                    <form method="POST" enctype="multipart/form-data" action="">
+                        {% if u.plan == 1 %}
+                            <div class="form-group">
+                                <button type="submit" name="upgradeLifetime" id="upgradeLifetime" class="btn btn-block btn-success">
+                                    Upgrade To Lifetime Membership
+                                </button>
+                            </div>
+                        {% elseif u.plan == 4 %}
+                            <div class="form-group">
+                                <button type="submit" name="cancelLifetime" id="cancelLifetime" class="btn btn-block btn-danger">
+                                    Cancel Lifetime Membership
+                                </button>
+                            </div>
+                        {% else %}
+                            <div class="form-group">
+                                <button type="submit" name="cancelSubscription" id="cancelSubscription" class="btn btn-block btn-danger">
+                                    Terminate Users Subscription
+                                </button>
+                            </div>
+                        {% endif %}
+                    </form>
+                    <form method="POST" enctype="multipart/form-data" action="/admin/users/{% if u.user_type == 0 %}b{% elseif u.user_type == 1 %}a{% endif %}/{{ u.user_id }}/">
+                        {% if u.user_type == 0 %}
+                            <div class="form-group mb-0">
+                                <button type="submit" name="submit" id="submit" class="btn btn-block btn-danger">
+                                    <i class="fas fa-user-slash"></i> Deactivate Account
+                                </button>
+                            </div>
+                        {% elseif u.user_type == 1 %}
+                            <div class="form-group mb-0">
+                                <button type="submit" name="submit" id="submit" class="btn btn-block btn-success">
+                                    <i class="fas fa-user-check"></i> Reactivate Account
+                                </button>
+                            </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-9">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-user"></i> User Details</h3>
+                </div>
+                <div class="card-body">
+                    {% if updated %}
+                        <div class="alert alert-success" role="alert">
+                            User Details Updated.
+                        </div>
+                    {% endif %}
+                    {% if subupdated %}
+                        <div class="alert alert-success" role="alert">
+                            User Subscription Updated.
+                        </div>
+                    {% endif %}
+                    {% if error %}
+                        <div class="alert alert-danger" role="alert">
+                            <ul class="mb-0">
+                                {% for message in error %}
+                                    <li>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                    <form method="POST" class="row" enctype="multipart/form-data" action="">
+                        <div class="col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="username">Username</label>
+                                <input type="text" name="username" id="username" tabindex="1" class="form-control" value="{{ u.username }}" />
+                                <p class="text-muted">
+                                    <small>
+                                        Usernames must be between 3 and 20 characters long and may contain numbers or letters.
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="user_email">Email Address</label>
+                                <input type="text" name="user_email" id="user_email" tabindex="2" class="form-control" value="{{ u.user_email }}" />
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="user_first_name">First Name</label>
+                                <input type="text" name="user_first_name" id="user_first_name" tabindex="3" class="form-control" value="{{ u.user_first_name }}" />
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="user_last_name">Last Name</label>
+                                <input type="text" name="user_last_name" id="user_last_name" tabindex="4" class="form-control" value="{{ u.user_last_name }}" />
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="user_from">Country</label>
+                                <select class="form-control" name="user_from" id="user_from" tabindex="5">
+                                    {% for short, country in countries %}
+                                        <option value="{{ short }}"{% if u.user_from == short %} selected{% endif %}>{{ country }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="user_timezone">Timezone</label>
+                                <select class="form-control" name="user_timezone" id="user_timezone" tabindex="6">
+                                    {{ options.timezone }}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <label class="form-label" for="user_dateformat">Date Format</label>
+                            <select class="form-control" name="user_dateformat" id="user_dateformat" tabindex="7">
+                                {{ options.format }}
+                            </select>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Date Of Birth</label>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <select class="form-control" name="user_birthday_day" id="user_birthday_day" tabindex="8">
+                                            {{ options.birthday.day }}
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <select class="form-control" name="user_birthday_month" id="user_birthday_month" tabindex="9">
+                                            {{ options.birthday.month }}
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <select class="form-control" name="user_birthday_year" id="user_birthday_year" tabindex="10">
+                                            {{ options.birthday.year }}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="form-label" for="group_id">User Group</label>
+                                <select class="form-control" name="group+id" id="group_id" tabindex="11">
+                                    {{ options.groups }}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 text-center">
+                            <button type="submit" name="updateAccount" id="updateAccount" class="btn btn-success" tabindex="12">
+                                <i class="fas fa-save"></i> Update Account Details
+                            </button>
+                        </div>
+                    </form>      
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-file-invoice-dollar"></i> User Invoices
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-hover" id="invoiceTable" data-page-length="25" cellpadding="0" cellspacing="0" border="0" data-order="[[ 2, &quot;desc&quot; ]]">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">&nbsp;</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Payment Method</th>
+                                <th scope="col">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if u.history %}
+                                {% for payment in u.history %}
+                                    <tr{% if payment.type == 'failed' %} class="table-secondary text-muted"{% endif %} id="Transaction{{ payment.id }}">
+                                        <td class="text-center" data-order="{{ payment.typeid }}">
+                                            {% if payment.typeid == 2 %}
+                                                <i class="far fa-plus text-info" data-toggle="tooltip" data-placement="left" title="New Order"></i>
+                                            {% elseif payment.typeid == 3 %}
+                                                <i class="far fa-hourglass text-info" data-toggle="tooltip" data-placement="left" title="Payment Processing"></i>
+                                            {% elseif payment.typeid == 4 %}
+                                                <i class="far fa-check text-info" data-toggle="tooltip" data-placement="left" title="Payment Authorized"></i>
+                                            {% elseif payment.typeid == 5 %}
+                                                <i class="far fa-check text-success" data-toggle="tooltip" data-placement="left" title="Payment Successful"></i>
+                                            {% elseif payment.typeid == 6 %}
+                                                <i class="far fa-times text-danger" data-toggle="tooltip" data-placement="left" title="Payment Failed"></i>
+                                            {% elseif payment.typeid == 7 %}
+                                                <i class="far fa-ban text-danger" data-toggle="tooltip" data-placement="left" title="Subscription Cancelled"></i>
+                                            {% elseif payment.typeid == 8 %}
+                                                <i class="far fa-reply text-dark" data-toggle="tooltip" data-placement="left" title="Payment Refunded"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ payment.id }}
+                                        </td>
+                                        <td data-order="{{ payment.date.raw }}">
+                                            {{ payment.date.formatted }}
+                                        </td>
+                                        <td data-sort="">
+                                            <i class="{% if payment.method == 'PayPal' %}fab fa-paypal{% else %}fas fa-credit-card{% endif %}" data-toggle="tooltip" data-placement="left" title="{{ payment.method }}"></i> {{ payment.account }}
+                                        </td>
+                                        <td data-order="{{ payment.amount }}">
+                                            {{ payment.currency }}{{ payment.amount }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr class="table-danger text-center">
+                                    <td colspan="5">No Payment History to display.</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="{{ rooturi }}/js/datatables.min.js"></script>
+    <script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+        $(document).ready(function() {
+            $('#invoiceTable').DataTable({
+                "lengthMenu": [[25, 50, 100], [25, 50, 100]]
+            });
+        });
+    </script>
+{% endblock %}

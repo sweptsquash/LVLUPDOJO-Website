@@ -1,0 +1,62 @@
+{% extends 'acp/base.html' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <form method="POST" enctype="multipart/form-data" action="">
+                {% if success %}
+                    <div class="alert alert-success" role="alert">
+                        Course Pricing Updated.
+                    </div>
+                {% endif %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Editting Base Price for "{{ course.name }}"</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if error %}
+                            <div class="alert alert-danger" role="alert">
+                                <ul>
+                                    {% for message in error %}
+                                        <li>{{ message }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <img src="{{ baseuri }}{{ course.thumbnail }}" alt="{{ course.name }}" />
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <label for="cost" class="col-form-label">Course Base Price</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-dollar-sign"></i>
+                                            </span>
+                                        </div>
+                                        <input type="number" class="form-control" name="cost" id="cost" value="{{ form.cost }}" min="0" step="0.01" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-center">
+                    <a href="{{ baseuri }}/admin/pricing/courses/" class="btn btn-danger">
+                        <i class="far fa-times"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary" name="updatePricing" id="updatePricing">
+                        Update Course Pricing
+                    </button>
+                </p>
+            </form>
+        </div>        
+    </div>
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

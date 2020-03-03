@@ -1,0 +1,41 @@
+{% extends 'acp/base.html' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Send Password Reset For User "{{ u.user_email }}"</h3>
+                </div>
+                <div class="card-body text-center">
+                    {% if success %}
+                        <div class="alert alert-success" role="alert">
+                            Password Reset Send To User "{{ u.user_email }}".
+                        </div>
+                    {% else %}
+                        <form method="POST" enctype="multipart/form-data" action="">
+                            {% if error %}
+                                <div class="alert alert-danger" role="alert">
+                                    <ul class="mb-0">
+                                        {% for message in error %}
+                                            <li>{{ message }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                            <p>Are you sure you want to send a password reset to this user?</p>
+                            <button type="submit" class="btn btn-success" name="submit" id="submit">
+                                <i class="fas fa-lock"></i> Yes, Send Password Reset
+                            </button> 
+                            <a href="{{ rooturi }}/admin/users/" class="btn btn-danger">
+                                <i class="fas fa-times"></i> No, Cancel
+                            </a>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

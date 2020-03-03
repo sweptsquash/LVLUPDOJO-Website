@@ -1,0 +1,65 @@
+{% extends 'acp/base.html' %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header pl-0 pr-0">
+            <div class="col-6">
+                <h3 class="card-title">Pricing Discounts</h3>
+            </div>
+            <div class="col-6 text-right">
+                <a href="/admin/pricing/discount/c/" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Create Discount
+                </a>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Code</th>
+                            <th scope="col" width="20%">Course / Plan</th>
+                            <th scope="col">%</th>
+                            {#<th scope="col">Limit</th>#}
+                            <th scope="col">Discount Start</th>
+                            <th scope="col">Discount End</th>
+                            <th scope="col">Added</th>
+                            <th scope="col">&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if discounts %}
+                            {% for key,discount in discounts %}
+                                <tr id="{{ key }}">
+                                    <td>{% if discount.code %}{{ discount.code }}{% else %}<span class="badge badge-info">Timed Discount</span>{% endif %}</td>
+                                    <td>{{ discount.item }}</td>
+                                    <td>{{ discount.percentage }}</td>
+                                    {#<td>{{ discount.limit }}</td>#}
+                                    <td>{{ discount.start }}</td>
+                                    <td>{{ discount.end }}</td>
+                                    <td>{{ discount.added }}</td>
+                                    <td class="text-right">
+                                        <a href="{% if discount.editable == 'true' %}{{ baseuri }}/admin/pricing/discount/e/{{ discount.type }}-{{ discount.id }}/{% else %}#{% endif %}" class="btn btn-primary{% if discount.editable == 'false' %} disabled{% endif %}">
+                                            <i class="fas fa-pencil"></i> Edit
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr class="table-danger text-center">
+                                <td colspan="6">
+                                    No Discounts Found.
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            {% if pagination %}
+                {{ pagination }}
+            {% endif %}
+        </div>
+    </div>	
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

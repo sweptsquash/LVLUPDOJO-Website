@@ -1,0 +1,203 @@
+<footer class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 col-md-4">
+				<h5>Useful Links</h5>
+				<a href="{{ baseuri }}" rel="bookmark" title="Home">Home</a>
+				<a href="{{ baseuri }}/about-us/" rel="bookmark" title="About Us">About Us</a>
+				<a href="https://blog.lvlupdojo.com/" target="_blank" rel="noopener">Blog</a>
+				<a href="{{ baseuri }}/courses/" rel="bookmark" title="Courses">Courses</a>
+				<a href="{{ baseuri }}/pricing/" rel="bookmark" title="Pricing">Pricing</a>
+				<a href="https://www.designbyhumans.com/shop/LVLUPDojo/" target="_blank" rel="noopener" title="Merch">Merch</a>
+			</div>
+			<div class="col-sm-12 col-md-4">
+				<h5>Legal</h5>
+				<a href="https://docs.google.com/a/lvlupdojo.com/forms/d/1lWmneAGsHb6UFNRSuBj28iTyIjggBi_9lS_e6n2tbvo" target="_blank" rel="noopener" title="Internships">Internships</a>
+				<a href="{{ baseuri }}/refund-policy/" rel="bookmark" title="Refund Policy">Refund Policy</a>
+				<a href="{{ baseuri }}/terms-and-conditions/" rel="bookmark" title="Terms & Conditions">Terms &amp; Conditions</a>
+				<a href="{{ baseuri }}/privacy-policy/" rel="bookmark" title="Privacy Policy">Privacy Policy</a>
+				<a href="{{ baseuri }}/contact-us/" rel="bookmark" title="Contact Us">Contact Us</a>
+			</div>
+			<div class="col-sm-12 col-md-4">
+				<h5>Stay In Touch</h5>
+				<p class="text-muted">
+					<small>Keep up with the new courses every month and receive free tips from the best of the best. Enter the Dojo! For questions, please email pizza@lvlupdojo.com.</small>
+				</p>
+				<form enctype="application/x-www-form-urlencoded" id="newsletterForm" method="post" action="">
+					<input type="hidden" name="CSRFName" value="{{ userForm.newsletter[0] }}" />
+					<input type="hidden" name="CSRFToken" value="{{ userForm.newsletter[1] }}" />
+					<label class="sr-only" for="EmailAddress">Email Address</label>
+					<div class="input-group">
+						<input type="text" name="EmailAddress" id="newsletterEmail" class="form-control" placeholder="Email..." />
+						<div class="input-group-append">
+							<button type="submit" name="newsletterSignup" id="newsletterSignup" class="btn btn-primary">
+								<i class="fas fa-envelope"></i><span class="sr-only">Sign Up For Newsletter</span>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="row justify-content-center mt-4">					
+			<div class="col-xs-12 col-sm-12 col-lg-6 col-lg-6 text-right">
+				<span class="d-inline-block border border-white p-2">
+					<i class="fas fa-lock border-right border-white pr-2"></i>&nbsp;&nbsp;Secured with SSL
+				</span>
+			</div>
+			<div class="col-xs-12 col-sm-12 col-lg-6 col-lg-6 pt-2">
+				<img src="{{ baseuri }}/img/visa.gif" width="30" data-toggle="tooltip" title="Visa" alt="Visa" />&nbsp;
+				<img src="{{ baseuri }}/img/mastercard.gif" width="30" data-toggle="tooltip" title="Master Card" alt="Master Card" />&nbsp;
+				<img src="{{ baseuri }}/img/amex.gif" width="20" data-toggle="tooltip" title="American Express" alt="Discover Network" />&nbsp;
+				<img src="{{ baseuri }}/img/discover.jpg" width="30" data-toggle="tooltip" title="Discover Network" alt="Discover Network" />
+				<img src="{{ baseuri }}/img/paypal.png" width="25" data-toggle="tooltip" title="Pay Pal" alt="Pay Pal" />
+			</div>
+		</div>
+	</div>
+	<div class="footnote text-center">
+		<p>&copy; {{ page.year }} LVLUP Dojo. All Rights Reserved.</p>
+	</div>
+</footer>
+
+<div class="to-top animated d-none" title="Back To Top">
+	<i class="far fa-chevron-up"></i>
+</div>
+
+{% if user.is_registered == false %}
+	<div class="modal modal-login fade" id="connectionModal" tabindex="-1" role="dialog" aria-labelledby="connectionLabel">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<ul class="modal-navigation">
+					<li class="active" id="loginAction">
+						<a href="#login" data-action="login">
+							<i class="fa fa-sign-in"></i> Log In
+						</a>
+					</li>
+					<li id="signupAction">
+						<a href="#signup" data-action="signup">
+							<i class="fa fa-user-plus"></i> Sign Up
+						</a>
+					</li>
+				</ul>
+				<div class="alert alert-danger d-none" role="alert"></div>
+				
+				<div class="row">
+					<div class="col-3">
+						<a href="{{ baseuri }}/twitch-authentication" class="btn btn-block btn-twitch{% if platforms.twitch == false %} disabled{% endif %}" title="Twitch">
+							<i class="fab fa-twitch"></i>
+						</a>
+					</div>
+					<div class="col-3">
+						<a href="{{ baseuri }}/facebook-authentication/" class="btn btn-block btn-facebook{% if platforms.facebook == false %} disabled{% endif %}" title="Facebook">
+							<i class="fab fa-facebook-f"></i>
+						</a>
+					</div>
+					<div class="col-3">
+						<a href="{{ baseuri }}/discord-authentication/" class="btn btn-block btn-discord{% if platforms.discord == false %} disabled{% endif %}" title="Discord">
+							<i class="fab fa-discord"></i>
+						</a>
+					</div>
+					<div class="col-3">
+						<a href="{{ baseuri }}/twitter-authentication/" class="btn btn-block btn-twitter{% if platforms.twitter == false %} disabled{% endif %}" title="Twitter">
+							<i class="fab fa-twitter"></i>
+						</a>
+					</div>
+				</div>
+
+				<div class="text-split">
+					<span>or continue with</span>
+				</div>
+
+				<form name="loginForm" id="loginForm" method="post" action="{{ baseuri }}/sign-in/" autocomplete="on" class="needs-validation" novalidate>
+					<div class="form-group" id="loginUsernameContainer">
+						<label for="username">Username / Email</label>
+						<input type="text" name="username" id="username" class="form-control" placeholder="Username or Email" value="" tabindex="1" />
+					</div>
+					<div class="form-group" id="loginPasswordContainer">
+						<label for="password">Password</label>
+						<div class="input-group">
+							<input type="password" name="password" id="password" class="form-control" placeholder="Password" tabindex="2" />
+							<div class="input-group-btn">
+								<a href="{{ baseuri }}/forgot-password/" class="btn btn-default" title="Forgot Your Password?">
+									<i class="fa fa-question"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="form-group hidden" id="loginReCaptchaContainer">
+						<div id="loginReCaptcha"></div>
+					</div>
+					<div class="form-group">
+						<input type="hidden" name="CSRFName" value="{{ userForm.login[0] }}" />
+						<input type="hidden" name="CSRFToken" value="{{ userForm.login[1] }}" />
+						<button type="submit" name="loginBtn" id="loginBtn" class="btn btn-block btn-primary" tabindex="3">Log In</button>
+					</div>
+				</form>
+				<form class="d-none needs-validation" name="signupForm" id="signupForm" method="post" action="{{ baseuri }}/sign-up/" autocomplete="on" novalidate>
+					<div class="form-group" id="emailGroup">
+						<label for="email" class="required">Email</label>
+						<input type="text" name="signup-email" id="signup-email" class="form-control" placeholder="Enter your email address" value="" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="A valid Email is required." tabindex="1" required />
+					</div>
+					<div class="form-group" id="usernameGroup">
+						<label for="signup-username" class="required">Username</label>
+						<input type="text" name="signup-username" id="signup-username" class="form-control" placeholder="Pick a username" value="" tabindex="2" autocomplete="new-username" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="May only contain numbers & letters. Must be between 3 and 20 characters." required />
+					</div>
+					<div class="form-group" id="passwordGroup">
+						<label for="signup-password" class="required">Password</label>
+						<input type="password" name="signup-password" id="signup-password" class="form-control" placeholder="Create A Password" autocomplete="new-password" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="MUST be between 10 and 100 characters long and contain letters and numbers." tabindex="3" required />
+					</div>
+					<div class="form-group">
+						<label class="required">Date Of Birth</label>
+						<div class="row">
+							<div class="col-4">
+								<select class="form-control" name="signup-dob-day" id="signup-dob-day" tabindex="4" required>
+									{% for i in 1..31 %}
+										<option value="{{ i }}"{% if "now"|date("j") == i %} selected{% endif %}>{{ i }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="col-4">
+								<select class="form-control" name="signup-dob-month" id="signup-dob-month" tabindex="5" required>
+									{% for month in 1..12 %}
+										{% set date = month ~ "/1/" ~ page.year %}
+										<option value="{{ date|date("m") }}"{% if "now"|date("m") == date|date("m") %} selected{% endif %}>{{ date|date("M") }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="col-4">
+								<select class="form-control" name="signup-dob-year" id="signup-dob-year" tabindex="6" required>
+									{% for i in 1930..page.year %}
+										<option value="{{ i }}"{% if "now"|date("Y") == i %} selected{% endif %}>{{ i }}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="signup-location">Country</label>
+						<select name="signup-location" id="signup-location" class="form-control" tabindex="7">
+							{% for short, country in countries %}
+								<option value="{{ short }}"{% if short == visitors_country %} selected{% endif %}>{{ country }}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="form-group">
+						<div class="g-recaptcha" id="g-recaptcha-signup" data-theme="dark" data-sitekey="{{ config.recaptcha_key }}"></div>
+					</div>
+					<div class="form-group">
+						<p class="text-muted">
+							<small>By clicking Sign Up, you are indicating that you have read and agree to the <a href="{{ baseuri }}/terms-and-conditions/" target="_blank">Terms &amp; Conditions</a> and <a href="{{ baseuri }}/privacy-policy/" target="_blank">Privacy Policy</a></small>
+						</p>
+					</div>
+					<div class="form-group">
+						<input type="hidden" name="CSRFName" value="{{ userForm.register[0] }}" />
+						<input type="hidden" name="CSRFToken" value="{{ userForm.register[1] }}" />
+						<button type="submit" name="sign-up" id="sign-up" tabindex="8" class="btn btn-block btn-primary">Sign Up</button>
+					</div>
+				</form>				
+			</div>
+		</div>
+	</div>
+{% endif %}

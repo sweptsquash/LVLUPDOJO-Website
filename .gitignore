@@ -1,0 +1,9 @@
+.vs/
+cache/
+docs/
+fonts/
+img/
+Install/data
+logs/
+vendor/*
+!vendor/SenFramework

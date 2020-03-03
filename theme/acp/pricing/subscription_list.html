@@ -1,0 +1,61 @@
+{% extends 'acp/base.html' %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header pl-0 pr-0">
+            <div class="col-6">
+                <h3 class="card-title">Subscription Plans</h3>
+            </div>
+            <div class="col-6 text-right">
+                <a href="{{ baseuri }}/admin/pricing/c/" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Create Plan
+                </a>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Cost</th>
+                            <th scope="col">Billed</th>
+                            <th scope="col">Active</th>
+                            <th scope="col">Published</th>
+                            <th scope="col">&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if subscriptions %}
+                            {% for key,plan in subscriptions %}
+                                <tr id="{{ key }}">
+                                    <td>{{ plan.name }}</td>
+                                    <td>{{ plan.cost }} {{ plan.currency }}</td>
+                                    <td>{{ plan.validity }} x {{ plan.period }}</td>
+                                    <td>{{ plan.active }}</td>
+                                    <td>{{ plan.published }}</td>
+                                    <td class="text-right">
+                                        <a href="{{ baseuri }}/admin/pricing/e/{{ plan.id }/" class="btn btn-primary">
+                                            <i class="fas fa-pencil"></i> Edit
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr class="table-danger text-center">
+                                <td colspan="6">
+                                    No Subscriptions Found.
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            {% if pagination %}
+                {{ pagination }}
+            {% endif %}
+        </div>
+    </div>	
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

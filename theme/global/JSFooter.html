@@ -1,0 +1,70 @@
+{# Global Javascript Footer #}
+{% if dev == false %}
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-79934106-1"></script>
+	<script nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+		window.addEventListener("load", function(){
+			window.cookieconsent.initialise({
+				"palette": {
+					"popup": {
+						"background": "#131010"
+					},
+					"button": {
+						"background": "#92281c"
+					}
+				},
+				"content": {
+					"href": "https://www.lvlupdojo.com/cookie-policy/"
+				}
+			})
+		});
+		
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'UA-79934106-1', {'user_id': '{{ user.user_id }}'});
+		
+		if (window.performance) {
+			var timeSincePageLoad = Math.round(performance.now());
+			
+			gtag('event', 'timing_complete', {
+				'name': 'load',
+				'value': timeSincePageLoad
+			});
+		}
+		
+		{% if coursesList %}
+			gtag('event', 'view_item_list', {
+				'event_category': 'ecommerce',
+				'event_label': '{% if courseListCategory %}{{ courseListCategory }} {% endif %}Courses'
+			});
+		{% endif %}
+		
+		{% if product %}
+			gtag('event', 'view_item', {
+				'event_category': 'ecommerce',
+				"items": [{
+					"id": "{{ product.id }}",
+					"name": "{{ product.name }}",
+					"price": "{{ product.cost.price }}"
+				}]
+			});
+		{% endif %}
+		
+		{% if article %}
+			gtag('event', 'view_item', {
+				'event_category': 'engagement',
+				'event_label': '{{ article.title }}'
+			});
+		{% endif %}
+		
+		!function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
+		},s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='//static.ads-twitter.com/uwt.js',
+		a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
+
+		twq('init','nz6qa');
+		twq('track','PageView');
+	</script>
+{% endif %}
+<script src="https://platform.twitter.com/widgets.js" async charset="utf-8"></script> 

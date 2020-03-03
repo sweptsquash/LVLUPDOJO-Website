@@ -1,0 +1,248 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<header class="parallax-banner header-shadow bg-dark-grey">
+		<div class="image" style="background-image:url({{ baseuri }}{{ config.home_banner }});"></div>
+		<div class="container">
+			<div class="row pb-5 mb-5">
+				<div class="col-12 pb-5 mb-5">
+					<h2 class="mb-3">Video Courses For <br />Creators and Competitors.</h2>
+					<a href="{{ baseuri }}/courses/apply-to-be-a-teacher/" class="btn btn-primary btn-lg no-shadow">
+						Apply To Be A Teacher <i class="fas fa-chalkboard-teacher"></i>
+					</a> 
+					<a href="{{ baseuri }}/{% if user.is_registered %}courses{% else %}sign-up{% endif %}/" class="btn btn-primary btn-lg no-shadow">
+						Get Started <i class="far fa-chevron-right"></i>
+					</a>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="promo bg-dark-grey">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<h3 class="mb-0">In The News</h3>
+				</div>
+			</div>
+		</div>
+	</section>		
+	<div class="container mt-3 mb-5">
+		<div class="row justify-content-center">
+			<div class="col-xs-4 col-sm-4 col-md-2 text-center">
+				<a href="https://www.forbes.com/sites/quora/2016/11/30/is-it-possible-to-get-paid-to-play-video-games/#3661c4ba6e5a" target="_blank" rel="noopener" title="Forbes">
+					<img src="{{ baseuri }}/img/references/forbes-01.png" alt="Forbes">
+				</a>
+			</div>
+			<div class="col-xs-4 col-sm-4 col-md-2 text-center">
+				<a href="https://www.inc.com/matthew-jones/this-startup-wants-to-solve-the-biggest-problem-in-esports.html" target="_blank" rel="noopener" title="Inc.">
+					<img src="{{ baseuri }}/img/references/Inc-01.png" alt="Inc.">
+				</a>
+			</div>
+			<div class="col-xs-4 col-sm-4 col-md-2 text-center">
+				<a href="https://www.influencive.com/5-crucial-lessons-digital-entrepreneurs-can-learn-professional-gamers/" target="_blank" rel="noopener" title="Influencive">
+					<img src="{{ baseuri }}/img/references/influencive-01.png" alt="Influencive">
+				</a>
+			</div>
+			<div class="col-xs-6 col-sm-6 col-md-2 text-center">
+				<a href="https://www.huffingtonpost.com/george-beall/5-reasons-parents-dont-co_b_13362488.html" target="_blank" rel="noopener" title="The Huffington Post">
+					<img src="{{ baseuri }}/img/references/huffpo-01.png" alt="The Huffington Post">
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<section class="promo diagonal-close-dark">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<h3 class="mb-0">Recent Courses</h3>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="bg-red pt-2 pb-3">
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					{% if courses is not null %}
+						{% set offset = 0 %}
+						{% for key, course in courses %}
+							{% if offset == 0 %}
+								<div class="card-deck">
+							{% endif %}
+
+								<a href="{{ baseuri }}/courses/{{ course.slug }}/" class="card course m-2">
+									<div>
+										<img class="card-img-top" src="{{ baseuri }}{{ course.thumbnail }}" alt="{{ course.name }}" />
+										<div class="title-container">
+											<h5 class="card-title mb-1">{{ course.name }}</h5>
+										</div>
+										{% if (user.is_registered == true and course.owned == true) %}
+											<div class="progress">
+												<div class="progress-bar" role="progressbar" style="width: {% if course.progress is null %}0{% else %}{{ course.progress.percent }}{% endif %}%;" aria-valuenow="{% if course.progress is null %}0{% else %}{{ course.progress.percent }}{% endif %}" aria-valuemin="0" aria-valuemax="100"></div>
+											</div>
+										{% endif %}
+									</div>
+									<div class="card-body text-dark">
+										<div class="row mb-2">
+											<div class="col-xs-12 col-sm-6 col-md-6">
+												{% if course.categories %}
+													{% for ckey, category in course.categories %}
+														<span class="badge badge-{{ category.class }} p-2">
+															{% if category.icon is not null %}
+																<i class="{{ category.icon }}"></i> 
+															{% endif %}{{ category.name }}
+														</span>
+													{% endfor %}
+												{% endif %}
+												{#<div class="br-wrapper br-theme-fontawesome-stars-o">
+													<div class="br-widget br-readonly">
+														<span class="br"></span>
+														<span class="br"></span>
+														<span class="br"></span>
+														<span class="br"></span>
+														<span class="br"></span>
+														<div class="br-current-rating">{{ course.rating }}</div>
+													</div>
+												</div>#}
+											</div>
+											<div class="col-xs-12 col-sm-6 col-md-6 text-right">
+												{% if ((user.is_registered == false or user.is_registered == true) and course.owned == false) %}
+													{% if course.cost.discount is not null %}
+														<small>
+															<s>${{ course.cost.price }}</s>
+														</small> <strong>$<span>{{ course.cost.discount_value }}</span></strong>
+													{% else %}
+														<strong>${{ course.cost.price }}</strong>
+													{% endif %}
+												{% else %}
+													<span class="badge badge-success"><i class="fas fa-shield-check"></i> Owned</span>
+												{% endif %}
+											</div>
+										</div>		
+										{#{% if course.categories %}
+											{% for ckey, category in course.categories %}
+												<span class="badge badge-{{ category.class }} p-2">
+													{% if category.icon is not null %}
+														<i class="{{ category.icon }}"></i> 
+													{% endif %}{{ category.name }}
+												</span>
+											{% endfor %}
+										{% endif %}#}
+										<p class="mt-2 mb-0">
+											{{ course.excerpt }}
+										</p>
+									</div>
+								</a>
+
+							{% set offset = offset + 1 %}
+							{% if offset == 4 %}
+								</div>
+								{% set offset = 0 %}
+							{% endif %}
+						{% endfor %}
+					{% else %}
+						<div class="alert alert-danger" role="alert">No Courses Found...</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="promo diagonal-open-dark">
+		<div class="container">
+			<div class="row">
+				<div class="col-12 text-center">
+					<a href="https://www.udemy.com/user/lvlup-dojo/?src=sac&kw=LVLUP" target="_blank" rel="noopener" class="btn btn-outline">
+						View Course On Udemy <i class="far fa-chevron-right"></i>
+					</a>
+					<a href="{{ baseuri }}/courses/" rel="bookmark" class="btn btn-outline">
+						View All Courses <i class="far fa-chevron-right"></i>
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="pt-2 pb-5">
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					<h3 class="mb-5 text-center">What People Are Saying About Our Courses.</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12 col-sm-12 col-md-6 text-center">
+					<blockquote class="blockquote">
+						<p class="mb-0">I suppose that what I came here looking for was the things that you don't see or hear about elsewhere and I was pleasantly surprised to have found them hiding in this course.</p>
+						<footer class="blockquote-footer">Joshua Crawford</footer>
+					</blockquote>
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-6 text-center">
+					<blockquote class="blockquote">
+						<p class="mb-0">I am ready to get involved deeper into content creation and I believe that this course is giving me information from people that have done it and have been successful.</p>
+						<footer class="blockquote-footer">David M Dailey</footer>
+					</blockquote>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12 col-sm-12 col-md-6 text-center">
+					<blockquote class="blockquote">
+						<p class="mb-0">This course is extremely well done, even as going into what twitch is. the amount of detail so far into the course is outstanding taking a good amount of time to even talk about the different types of streamers.</p>
+						<footer class="blockquote-footer">Connor Martin</footer>
+					</blockquote>
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-6 text-center">
+					<blockquote class="blockquote">
+						<p class="mb-0">Great course, I would definitely recommend it to anyone looking to take up streaming, be it casual or full time.</p>
+						<footer class="blockquote-footer">Lyssa Corlett</footer>
+					</blockquote>
+				</div>
+			</div>
+			<div class="row mt-5 justify-content-center">
+				<div class="col-xs-12 col-sm-12 col-md-5 pt-1">
+					<h4>Learn and make gaming your career.</h4>
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-2">
+					<a href="{{ baseuri }}/courses/" rel="bookmark" class="btn btn-outline ml-0">Get Started <i class="far fa-chevron-right"></i></a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="promo diagonal-close-dark diagonal-open-dark">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-12 mb-5">
+					<h3 class="mb-0">Affiliations</h3>
+				</div>
+				<div class="col-xs-4 col-sm-4 col-md-2 mb-5 text-center">
+					<img src="{{ baseuri }}/img/affiliations/udemy-01.png" class="img-fluid" alt="Twitch" data-toggle="tooltip" data-placement="top" title="Udemy">
+				</div>
+				<div class="col-xs-4 col-sm-4 col-md-2 mb-5 text-center">
+					<img src="{{ baseuri }}/img/affiliations/twitch-01.png" class="img-fluid" alt="Twitch" data-toggle="tooltip" data-placement="top" title="Twitch">
+				</div>
+				<div class="col-xs-4 col-sm-4 col-md-2 mb-5 text-center">
+					<img src="{{ baseuri }}/img/affiliations/e-blue-01.png" class="img-fluid" alt="Blue" data-toggle="tooltip" data-placement="top" title="Blue">
+				</div>
+				<div class="col-xs-4 col-sm-4 col-md-2 mb-5 text-center">
+					<img src="{{ baseuri }}/img/affiliations/discord-01.png" class="img-fluid" alt="Discord" data-toggle="tooltip" data-placement="top" title="Discord">
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-xs-4 col-sm-4 col-md-2 mb-5 text-center">
+					<img src="{{ baseuri }}/img/affiliations/optic-01.png" class="img-fluid" alt="Optic Gaming" data-toggle="tooltip" data-placement="top" title="Optic Gaming">
+				</div>
+				<div class="col-xs-4 col-sm-4 col-md-2 mb-5 text-center">
+					<img src="{{ baseuri }}/img/affiliations/faze-01.png" class="img-fluid" alt="FaZe" data-toggle="tooltip" data-placement="top" title="FaZe">
+				</div>
+				<div class="col-xs-4 col-sm-4 col-md-2 mb-5 text-center">
+					<img src="{{ baseuri }}/img/affiliations/tsm-01.png" class="img-fluid" alt="Team SoloMid" data-toggle="tooltip" data-placement="top" title="Team SoloMid">
+				</div>				
+			</div>
+		</div>
+	</section>
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

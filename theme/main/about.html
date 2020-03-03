@@ -1,0 +1,74 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<header class="parallax-banner small-banner header-shadow bg-dark-grey">
+		<div class="image" style="background-image:url({{ baseuri }}{{ config.default_banner }});"></div>
+		<div class="container">
+			<div class="row pb-5 mb-5">
+				<div class="col-12 text-center pb-5 mb-5">
+					<h1><i class="fas fa-users"></i> About Us</h1>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="bg-white diagonal-open-dark text-dark py-5 clip-path-fix">
+		<div class="container clip-path-fix mb-5">
+			<div class="row">
+				{% if config.about_video %}
+					<div class="col-12 mb-3">
+						<div class="embed-responsive embed-responsive-16by9">
+							<iframe class="embed-responsive-item" src="{{ config.about_video }}?rel=0&amp;showinfo=0" allowfullscreen></iframe>
+						</div>
+					</div>
+				{% endif %}
+				<div class="col-12">
+					{{ config.about_text }}
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="promo diagonal-close-dark clip-path-fix">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<h3 class="mb-0">Meet The Team</h3>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="bg-red diagonal-open-dark pt-2 pb-3">
+		<div class="container">
+			<div class="row justify-content-center">
+				{% if team is not null %}
+					{% for key, member in team %}
+						<div class="col-md-4">
+							<div class="rhombus" style="background-image:url('{{ baseuri }}{{ member.avatar }}');" title="{{ member.name }}">
+								<div class="rhombus-layer">
+									<p class="lead">{{ member.name }}</p>
+									<p>{{ member.position }}</p>
+									{% if member.linkedin is not null %}
+										<a href="{{ member.linkedin }}" title="{{ member.name }} LinkedIn">
+											<i class="fab fa-linkedin-in"></i>
+										</a>
+									{% endif %}
+									{% if member.twitter is not null %}
+										<a href="https://www.twitter.com/{{ member.twitter }}" title="{{ member.name }} Twitter">
+											<i class="fab fa-twitter"></i>
+										</a>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				{% else %}
+					<div class="col-12">
+						<div class="alert alert-danger">No Team Members Found...</div>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	</section>	
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

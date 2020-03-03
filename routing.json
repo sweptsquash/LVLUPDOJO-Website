@@ -1,0 +1,181 @@
+{
+	"pageDefaults": {
+		"name": "LVLUP Dojo"
+	},
+	"routes": {
+		"api": {
+			"controller": "Controllers\\API"
+		},
+		"webhook": {
+			"controller": "Controllers\\WebHook"
+		},
+		"admin": {
+			"controller": "Controllers\\ACP",
+			"template_folder": "acp"
+		},	
+		"activate": {
+			"title": "Account Activation",
+			"title_seperator": true,
+			"template": "activate",
+			"template_folder": "main/auth",
+			"controller": "Controllers\\Auth"
+		},
+		"forgot-password": {
+			"title": "Forgot Your Password",
+			"title_seperator": true,
+			"template": "forgot",
+			"template_folder": "main/auth",
+			"controller": "Controllers\\Auth"
+		},
+		"sign-up": {
+			"title": "Sign Up",
+			"title_seperator": true,
+			"template": "signup",
+			"template_folder": "main/auth",
+			"controller": "Controllers\\Auth"
+		},
+		"sign-in": {
+			"title": "Sign In",
+			"title_seperator": true,
+			"template": "signin",
+			"template_folder": "main/auth",
+			"controller": "Controllers\\Auth"
+		},		
+		"sign-out": {
+			"controller": "Controllers\\Auth"
+		},
+		"twitch-authentication": {
+			"title": "Twitch Authentication",
+			"title_seperator": true,
+			"template": "connecting",
+			"template_folder": "main/auth",
+			"controller": "Controllers\\Connect"
+		},
+		"facebook-authentication": {
+			"title": "Facebook Authentication",
+			"title_seperator": true,
+			"template": "connecting",
+			"template_folder": "main/auth",
+			"controller": "Controllers\\Connect"
+		},
+		"discord-authentication": {
+			"title": "Discord Authentication",
+			"title_seperator": true,
+			"template": "connecting",
+			"template_folder": "main/auth",
+			"controller": "Controllers\\Connect"
+		},
+		"twitter-authentication": {
+			"title": "Twitter Authentication",
+			"title_seperator": true,
+			"template": "connecting",
+			"template_folder": "main/auth",
+			"controller": "Controllers\\Connect"
+		},
+		"cart": {
+			"title": "Shopping Cart",
+			"title_seperator": true,
+			"template": "manage",
+			"template_folder": "main/cart",
+			"controller": "Controllers\\Cart"
+		},
+		"dashboard": {
+			"title": "Dashboard",
+			"title_seperator": true,
+			"template": "index",
+			"template_folder": "main/dashboard",
+			"controller": "Controllers\\Dashboard"
+		},
+		"home": {
+			"title": "LVLUP Dojo - Online Courses for Gamers",
+			"title_seperator": false,
+			"template": "home",
+			"template_folder": "main",
+			"controller": "Controllers\\Home"
+		},
+		"pricing": {
+			"title": "Pricing",
+			"title_seperator": true,
+			"template": "pricing",
+			"template_folder": "main",
+			"controller": "Controllers\\Pricing"
+		},
+		"about-us": {
+			"title": "About Us",
+			"title_seperator": true,
+			"template": "about",
+			"template_folder": "main",
+			"controller": "Controllers\\About"
+		},
+		"courses": {
+			"title": "Courses",
+			"title_seperator": true,
+			"template": "list",
+			"template_folder": "main/courses",
+			"controller": "Controllers\\Courses"
+		},
+		"contact-us": {
+			"title": "Contact Us",
+			"title_seperator": true,
+			"template": "contact",
+			"template_folder": "main",
+			"controller": "Controllers\\Contact"
+		},
+		"refund-policy": {
+			"title": "Refund Policy",
+			"title_seperator": true,
+			"template": "legal",
+			"template_folder": "main",
+			"controller": "Controllers\\Legal"
+		},
+		"cookie-policy": {
+			"title": "Cookie Policy",
+			"title_seperator": true,
+			"template": "legal",
+			"template_folder": "main",
+			"controller": "Controllers\\Legal"
+		},
+		"privacy-policy": {
+			"title": "Privacy Policy",
+			"title_seperator": true,
+			"template": "legal",
+			"template_folder": "main",
+			"controller": "Controllers\\Legal"
+		},
+		"terms-and-conditions": {
+			"title": "Terms &amp; Conditions",
+			"title_seperator": true,
+			"template": "legal",
+			"template_folder": "main",
+			"controller": "Controllers\\Legal"
+		},
+		"p": {
+			"title": "Profile",
+			"title_seperator": true,
+			"template": "profile",
+			"template_folder": "main",
+			"controller": "Controllers\\Profile"
+		}
+	},
+	"remapped":{
+		"default": "home",
+		"blog": "home",
+		"article": "home",
+		"article.aspx": "home",
+		"forgot": "forgot-password",
+		"request_reset": "forgot-password",
+		"signin": "sign-in",
+		"signout": "sign-out",
+		"login": "sign-in",
+		"register": "sign-up",
+		"logout": "sign-out",
+		"contact": "contact-us",
+		"terms": "terms-and-conditions",
+		"privacy": "privacy-policy",
+		"course": "courses",
+		"mentors": "courses",
+		"products": "courses",
+		"profile": "p",
+		"subscriptions": "pricing"
+	}
+}

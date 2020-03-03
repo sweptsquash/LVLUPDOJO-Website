@@ -1,0 +1,198 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<section class="banner banner-video banner-grey header-shadow" style="background-position: top center; background-image:url('{{ baseuri }}{% if product.banner is not null %}{{ product.banner }}{% else %}{{ config.default_banner }}{% endif %}');">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-10">
+					<div class="embed-responsive embed-responsive-16by9">
+						<iframe class="embed-responsive-item" src="{{ lesson.source }}" allowfullscreen></iframe>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="bg-grey diagonal-open-dark light text-dark pt-5 pb-5">
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-12 col-sm-8 col-md-8">
+					<h2>{{ lesson.name }}</h2>
+					{{ lesson.description }}
+					
+					<h3 class="h2">Curriculum For This Course</h3>
+					{% for key, lesson in product.lessons %}
+						{% if lesson.type == 3 or lesson.type == 5 %}
+							<a href="{% if lesson.unlocked %}/courses/{{ product.slug }}/download/{% if lesson.type == 5 %}course{% else %}lesson{% endif %}-book{% if lesson.type == 3 %}-{{ lesson.slug }}{% endif %}/{% else %}#{% endif %}"{% if lesson.unlocked %}target="_blank"{% endif %} class="card mb-2"{% if lesson.unlocked == false %}{% if ((user.is_registered == false or user.is_registered == true) and product.owned == false) %} data-toggle="modal" data-target="#{% if user.is_registered == false %}connectionModal{% else %}purchaseModal{% endif %}"{% endif %}{% endif %}>
+								<div class="card-header">
+									<h5 class="mb-0 h6">
+										<i class="fas fa-{% if lesson.unlocked == false %}lock{% else %}file{% endif %}"></i> {% if lesson.type == 3 %}Lesson{% elseif lesson.type == 5 %}Course{% endif %} Workbook: {{ lesson.name }}
+									</h5>
+								</div>
+							</a>
+						{% else %}
+							<a href="{% if lesson.unlocked %}{{ baseuri }}/courses/{{ product.slug }}/l/{{ lesson.slug }}/{% else %}#{% endif %}" class="card flex-row course-lesson mb-2{% if lesson.unlocked == false %} locked{% endif %}"{% if lesson.unlocked == false %}{% if ((user.is_registered == false or user.is_registered == true) and product.owned == false) %} data-toggle="modal" data-target="#{% if user.is_registered == false %}connectionModal{% else %}purchaseModal{% endif %}"{% endif %}{% endif %}>
+								<div class="card-img-top">
+									<img src="{{ lesson.thumbnail }}" alt="{% if lesson.name != 'Intro' and lesson.name != 'Outro' %}Lesson {{ lesson.orderNo }}: {% endif %}{{ lesson.name }}" />
+									<span class="badge badge-pill badge-secondary">{{ lesson.duration }}</span>
+								</div>
+								<div class="card-body p-0">
+									<h5 class="card-title p-2 mb-0 h6">{% if lesson.name != 'Intro' and lesson.name != 'Outro' %}Lesson: {% endif %}{{ lesson.name }}</h5>
+									<div class="p-2">
+										<p class="card-text">{{ lesson.excerpt }}</p>
+									</div>
+								</div>
+							</a>
+							{% if lesson.resources %}
+								{% for rkey, resource in lesson.resources %}
+									<a href="{% if resource.unlocked %}{{ baseuri }}/courses/{{ product.slug }}/download/{% if resource.type == 5 %}course{% else %}lesson{% endif %}-book{% if resource.type == 3 %}-{{ lesson.slug }}{% endif %}/{% else %}#{% endif %}"{% if resource.unlocked %}target="_blank"{% endif %} class="card mb-2"{% if resource.unlocked == false %}{% if ((user.is_registered == false or user.is_registered == true) and product.owned == false) %} data-toggle="modal" data-target="#{% if user.is_registered == false %}connectionModal{% else %}purchaseModal{% endif %}"{% endif %}{% endif %}>
+										<div class="card-header">
+											<h5 class="mb-0 h6">
+												<i class="fas fa-{% if resource.unlocked == false %}lock{% else %}file{% endif %}"></i> {% if resource.type == 3 %}Lesson{% elseif resource.type == 5 %}Course{% endif %} Workbook: {{ resource.name }}
+											</h5>
+										</div>
+									</a>
+								{% endfor %}
+							{% endif %}
+						{% endif %}
+					{% endfor %}
+				</div>
+				<div class="col-xs-12 col-sm-4 col-md-4">
+					<div class="right-module p-1" style="position:relative; top:0; width:100%;">
+						<div class="pt-2 pr-3 pb-2 pl-3">
+							{% if ((user.is_registered == false or user.is_registered == true) and product.owned == false) %}
+								<button type="button" name="purchaseCourse" id="purchaseCourse" data-item="{{ product.id }}" data-toggle="modal" data-target="#{% if user.is_registered == false %}connectionModal{% else %}purchaseModal{% endif %}" class="btn btn-primary btn-block p-3">
+									<i class="fas fa-credit-card"></i> Buy Now ${{ product.price }}
+								</button>
+								{% for key, option in pricing %}
+									{% if option.slug != 'free' %}
+										<a href="{{ baseuri }}/sign-up/{{ option.slug }}/" class="btn btn-block btn-outline-primary p-3">
+											{{ option.name }} (${{ option.cost }})
+										</a>
+									{% endif %}
+								{% endfor %}
+								<p class="text-muted text-center mb-2">
+									<small>30-Day Money-Back Guarantee</small>
+								</p>
+							{% else %}
+								{% if product.progress is not null %}
+									<div class="progress mb-2">
+										<div class="progress-bar" role="progressbar" style="width: {{ product.progress.percent }}%;" aria-valuenow="{{ product.progress.percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+									</div>
+								{% endif %}
+								{% if product.reviewed is null %}
+									<a href="#review" class="btn btn-block btn-outline-primary p-3 mb-2">
+										Review &amp; Rate Course
+									</a>
+								{% endif %}
+								{% if lesson.books.lesson %}
+									<a href="/courses/{{ product.slug }}/download/lesson-book-{{ lesson.slug }}/" target="_blank" class="btn btn-block btn-primary p-3 mb-2">
+										Download Lesson Workbook
+									</a>
+								{% endif %}
+								{% if lesson.books.course %}
+									<a href="/courses/{{ product.slug }}/download/course-book/" target="_blank" class="btn btn-block btn-outline-primary p-3 mb-2">
+										Download Course Workbook
+									</a>
+								{% endif %}
+							{% endif %}
+							<p class="mb-2">
+								<strong>Includes:</strong>
+							</p>
+							<ul class="list-unstyled pl-3">
+								<li class="mb-2">
+									<i class="far fa-clock mr-2"></i> {{ product.hours }} hours on-demand video
+								</li>
+								<li class="mb-2">
+									<i class="fas fa-key mr-2"></i> Lifetime access
+								</li>
+								{% if product.lessonWorkbook > 0 %}
+									<li class="mb-2">
+										<i class="fas fa-file mr-2"></i> {{ product.lessonWorkbook }} Lesson Workbook{% if product.lessonWorkbook > 1 %}s{% endif %}
+									</li>
+								{% endif %}
+								{% if product.courseWorkbook > 0 %}
+									<li class="mb-2">
+										<i class="fas fa-file-pdf mr-2"></i> {{ product.courseWorkbook }} Course Workbook{% if product.courseWorkbook > 1 %}s{% endif %}
+									</li>
+								{% endif %}	
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+{% endblock %}
+
+{% block javascripts %}
+	<script src="https://player.vimeo.com/api/player.js"></script>
+	<script type="text/javascript" src="{{ baseuri }}/js/jquery.barrating.min.js"></script>
+	{% if user.user_id != 1 %}
+		<script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+			var lessonSync;
+			var lessonProgress = {
+				seconds: 0,
+				percent: 0
+			};
+
+			function updateProgress(stopLoop = false) {
+				var payload = new FormData();
+				
+				payload.append('course', {{ product.id }});
+				payload.append('lesson', {{ lesson.id }});
+				payload.append('progress', lessonProgress.percent);
+				payload.append('time', lessonProgress.seconds);
+
+				$.ajax({
+					type: "POST",
+					url: baseuri + '/api/course/progress/',
+					data: payload,
+					contentType: false,
+					cache: false,
+					processData: false,
+					dataType: "json"
+				});
+
+				if(stopLoop == false) {
+					lessonSync = setTimeout(updateProgress, 3000);
+				}
+			}
+
+			$(function() {
+				var iframe = document.querySelector('iframe');
+				var player = new Vimeo.Player(iframe);
+
+				{% if lesson.progress.timestamp is not null and lesson.progress.finished == false %}
+					player.setCurrentTime({{ lesson.progress.timestamp }});
+				{% endif %}
+
+				player.on('timeupdate', function(data) {
+					lessonProgress.seconds = data.seconds;
+					lessonProgress.percent = data.percent;
+				});
+
+				player.on('play', function(data) {
+					lessonSync = setTimeout(updateProgress, 3000);
+				});
+
+				player.on('pause', function(data) {
+					clearTimeout(lessonSync);
+
+					lessonProgress.seconds = data.seconds;
+					lessonProgress.percent = data.percent;
+
+					updateProgress(true);
+				});
+
+				player.on('ended', function(data) {
+					clearTimeout(lessonSync);
+
+					lessonProgress.seconds = data.seconds;
+					lessonProgress.percent = data.percent;
+
+					updateProgress(true);
+				});
+			});
+		</script>
+	{% endif %}
+{% endblock %}

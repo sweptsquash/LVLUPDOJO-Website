@@ -1,0 +1,373 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<header class="parallax-banner small-banner header-shadow bg-dark-grey">
+		<div class="image"  style="background-image:url('{{ baseuri }}{{ config.default_banner }}');"></div>
+		<div class="container">
+			<div class="row pb-5 mb-5">
+				<div class="col-12 text-center pb-5 mb-5">
+					<h1>Billing - Plan Management</h1>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="bg-white diagonal-open-dark text-dark py-5 clip-path-fix">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3">
+					<div class="list-group">
+						<a href="{{ baseuri }}/dashboard/" class="list-group-item list-group-item-action">
+							<i class="fas fa-book"></i> My Courses
+						</a>
+						<a href="{{ baseuri }}/dashboard/account/" class="list-group-item list-group-item-action">
+							<i class="fas fa-user"></i> Account
+						</a>
+						<a href="{{ baseuri }}/dashboard/remove/" class="list-group-item list-group-item-action">
+							<i class="fas fa-user-times"></i> Delete Account
+						</a>
+						<a href="{{ baseuri }}/dashboard/security/" class="list-group-item list-group-item-action">
+							<i class="fas fa-shield-alt"></i> Security
+						</a>
+						<a href="{{ baseuri }}/dashboard/billing/" class="list-group-item list-group-item-action active">
+							<i class="fas fa-credit-card"></i> Billing
+						</a>
+						<a href="{{ baseuri }}/dashboard/connections/" class="list-group-item list-group-item-action">
+							<i class="fas fa-link"></i> Connections
+						</a>
+					</div>
+				</div>
+				<div class="col-md-9">
+					{% if result == 'success' %}
+						<p class="text-center">
+                            <div class="swal-icon swal-icon--success">
+                                <span class="swal-icon--success__line swal-icon--success__line--long"></span>
+                                <span class="swal-icon--success__line swal-icon--success__line--tip"></span>
+                            
+                                <div class="swal-icon--success__ring"></div>
+                                <div class="swal-icon--success__hide-corners"></div>
+                            </div>
+						</p>
+						<h3 class="text-center">Membership Upgraded</h3>
+						<p class="text-center">Order <strong>{{ invoice_number }}</strong> processed.</p>
+						<p class="text-center"><a href="{{ baseuri }}/dashboard/" rel="noopener">Click Here</a> to go to your Course Library.</p>
+					{% else %}
+						{% if user.subscription.id != 1 %}
+							<div class="row mb-3">
+								<div class="col-6">
+									Cancel anytime. Need to talk to someone? <a href="https://www.lvlupdojo.com/contact-us/">Contact Us</a>, We'd love to help.
+								</div>
+								<div class="col-6 pt-1 text-right">
+									<a href="{{ baseuri }}/dashboard/billing/cancel/" class="btn btn-outline-danger">Cancel</a>
+								</div>
+							</div>
+						{% else %}
+							<form name="subscriptions" action="" method="POST" enctype="application/x-www-form-urlencoded">
+								
+
+								<div class="table-responsive">
+									<table class="table table-bordered">
+										<thead class="thead-light">
+											<tr>
+												<th>&nbsp;</th>
+												{% for key, option in pricing %}
+													<th class="align-middle text-center">
+														<h5 class="mb-0">{{ option.name }}</h5>
+													</th>
+												{% endfor %}
+											</tr>
+										</thead>
+										<tbody>
+											{% for key, option in pricingOptions %}
+												<tr>
+													<td class="align-middle">
+														{{ option.name }} {% if option.description is not null %}<i class="fa fa-question-circle text-dark" data-container="body" data-toggle="popover" data-placement="right" data-content="{{ option.description }}"></i>{% endif %}
+													</td>
+													{% for plankey, plan in pricing %}
+														<td class="align-middle text-center">
+															{% if option.plans[plankey] is not null %}<i class="far fa-check text-success"></i>{% else %}<i class="far fa-times text-danger"></i>{% endif %}
+														</td>
+													{% endfor %}
+												</tr>
+											{% endfor %}
+										</tbody>
+										<tfoot>
+											<tr>
+												<td>&nbsp;</td>
+												{% for plankey, plan in pricing %}
+													<td class="align-middle text-center">
+														<a href="#" class="btn btn-lg btn-block btn-{% if user.data.subscription.id == plan.id %}outline-primary disabled{% else %}{% if form.selected == plan.id %}success active{% else %}primary{% endif %}{% endif %}" data-plan="{{ plan.id }}" data-name="{{ plan.name }}">
+															{% if user.data.subscription.id == plan.id %}
+																Current Plan
+															{% else %}
+																$<span id="price">{{ plan.cost }}</span> <small id="period">/ {% if plan.period == 'Month' %}Mo{% else %}Yr{% endif %}</small>
+															{% endif %}
+														</a>
+													</td>
+												{% endfor %}
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+
+								<div class="row">
+									<div class="col-md-12">
+										<div class="list-group mb-3">
+											<div class="list-group-item">
+												<div class="row radio">
+													<div class="col-xs-3 col-md-3">
+														<label class="mb-0">
+															<input type="radio" value="stripe" name="paymentMethod" id="method1" class="mr-2" checked />
+															Credit/Debit Card
+														</label>
+													</div>
+													<div class="col-xs-9 col-md-9">
+														<img src="{{ cdnuri }}/img/cards.png" height="24" width="" alt="" />
+													</div>
+												</div>
+											</div>
+											<div class="list-group-item">
+												<div class="row radio">
+													<div class="col-xs-3 col-md-3">
+														<label class="mb-0">
+															<input type="radio" value="paypal" name="paymentMethod" id="method2" class="mr-2" />
+															PayPal
+														</label>
+													</div>
+													<div class="col-xs-9 col-md-9">
+														<img src="{{ cdnuri }}/img/paypalcard.png" height="24" width="" alt="" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-7">
+										<div class="input-group">
+											<div class="input-group-prepend">
+												<span class="input-group-text">Discount Code</span>
+											</div>
+											<input type="text" class="form-control" name="discountCode" id="discountCode" value="{{ form.discount }}"{% if form.discount %} readonly{% endif %} />
+											<div class="input-group-append">
+												<button type="button" name="applyDiscount" id="applyDiscount" class="btn btn-success"{% if form.discount %} disabled{% endif %}>
+													Apply Discount
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-5 text-right">
+										<input type="hidden" name="couponID" value="{{ form.discountID }}" />
+										<input type="hidden" name="paymentPlan" value="{{ form.selected }}" />
+										<input type="hidden" name="paymentToken" value="" />
+										<input type="hidden" name="paymentEmail" value="" />
+										<input type="hidden" name="paymentID" value="" />
+
+										<button type="button" name="paypal-button-container" id="paypal-button-container" class="btn btn-primary d-none{% if form.selected == 0 %} disabled{% endif %}"{% if form.selected == 0 %} disabled{% endif %}>
+											Upgrade To Selected Subscription
+										</button>
+
+										<button type="button" name="upgradeSubscription" id="upgradeSubscription" class="btn btn-primary{% if form.selected == 0 %} disabled{% endif %}"{% if form.selected == 0 %} disabled{% endif %}>
+											Upgrade To Selected Subscription
+										</button>
+									</div>
+								</div>
+							</form>
+						{% endif %}
+					{% endif %}
+                </div>
+            </div>		
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+	{% if user.subscription.id == 1 %}
+		<script type="text/javascript" src="https://checkout.stripe.com/checkout.js"></script>
+		<script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+			var paymentConfig = {
+					stripe: '{% if dev %}{{ config.stripe_key_dev }}{% else %}{{ config.stripe_key }}{% endif %}'
+				},
+				paymentDetails = {
+					amount: {
+						total: '',
+						currency: 'USD'
+					},
+					email: '{{ user.user_email }}',
+					description: '',
+					period: ''
+				},
+				discountIDs = {
+					{% if form.discountPlans %}
+						{% for key, value in form.discountPlans %}
+							{{ key }}: '{{ value.id }}'{% if loop.last == false %},{% endif %}
+						{% endfor %}
+					{% endif %}
+				};
+
+            $(function() {
+				$('input[name="paymentMethod"]').change(function() {
+					var service = $(this).val();
+
+					switch(service) {
+						default:
+						case"stripe":
+							$('#paypal-button-container').removeClass('d-inline-block').removeClass('align-middle').addClass('d-none');
+							$('button[name="upgradeSubscription"]').removeClass('d-none');
+						break;
+
+						case"paypal":
+							$('#paypal-button-container').removeClass('d-none').addClass('d-inline-block').addClass('align-middle');
+							$('button[name="upgradeSubscription"]').addClass('d-none');
+						break;
+					}
+				});
+
+				$('.btn[data-plan]').on('click', function(e) {
+					e.preventDefault();
+
+					var plan = $(this).data('plan'),
+						planName = $(this).data('name'),
+						planCost = $('#price', this).html();
+
+					$('.btn-success.active[data-plan]').removeClass('btn-success').removeClass('active').addClass('btn-primary');
+					$(this).removeClass('btn-primary').addClass('btn-success').addClass('active');
+
+					if($('button[name="upgradeSubscription"]').hasClass('disabled')) {
+						$('button[name="upgradeSubscription"]').removeClass('disabled').removeAttr('disabled').removeProp('disabled');
+					}
+
+					if($('button[name="paypal-button-container"]').hasClass('disabled')) {
+						$('button[name="paypal-button-container"]').removeClass('disabled').removeAttr('disabled').removeProp('disabled');
+					}
+
+					paymentDetails.amount.total = planCost;
+					paymentDetails.description = planName;
+					paymentDetails.period = $('#period', this).html();
+
+					$('input[name="paymentPlan"]').val(plan);
+
+					if(discountIDs[plan] !== undefined && discountIDs[plan] !== null) {
+						$('input[name="couponID"]').val(discountIDs[plan]);
+					}
+				});
+				
+				$('button[name="applyDiscount"]').click(function() {
+					var discount = $('input[name="discountCode"]').val();
+						discount = $.trim(discount);
+
+					if(discount.length > 0) {
+						var formData = new FormData();
+							formData.append('code', discount);
+
+						$.ajax({
+							method: "POST",
+							processData: false,
+							contentType: false,
+							url: "/api/discount/",
+							data: formData,
+							dataType: "json",
+							cache: false,
+							error: function(jqXHR, data, errorThrown) {
+								swal("Error", 'Invalid Discount Code.', "error");
+							},
+							success: function(data, textStatus, jqXHR) {
+								$('button[name="applyDiscount"]').attr('disabled', 'disabled').prop('disabled');
+								$('input[name="discountCode"]').attr('readonly', 'readonly').prop('readonly');
+
+								$.each(data.plans, function(key,value) {
+									var element = $('.btn[data-plan="'+key+'"]');
+
+									discountIDs[key] = value.id;
+
+									if(!$(element).hasClass('btn-outline-primary')) {
+										$('#price', element).html(value.cost);
+
+										if($(element).hasClass('btn-success')) {
+											paymentDetails.amount.total = value.cost;
+											$('input[name="couponID"]').val(value.id);
+										}
+									}
+								});
+							}
+						});
+					} else {
+						swal("Error", 'No Discount Code Provided.', "error");
+					}
+				});
+
+				// Stripe
+				var stripeHandler = StripeCheckout.configure({
+					key: paymentConfig.stripe,
+					image: 'https://www.lvlupdojo.com/img/dojo-logo-128x128.png',
+					name: 'LVLUP Dojo',
+					allowRememberMe: false,
+					zipCode: true,
+					billingAddress: true,
+					locale: 'auto',
+					token: function(token) {
+						swal({
+							title: "Processing...", 
+							icon: "info",
+							button: false,
+							text: 'Please wait while we process your order.'
+						});
+
+						$('input[name="paymentToken"]').val(token.id);
+						$('input[name="paymentEmail"]').val(token.email);
+						$('form[name="subscriptions"]').submit();
+					}
+				});
+
+				$('button[name="upgradeSubscription"]').click(function() {
+					var paymentMethod = $('input[name="paymentMethod"]:checked').val(),
+						paymentTotal = 100 * parseFloat(paymentDetails.amount.total),
+						paymentPlan = $('input[name="paymentPlan"]').val();
+
+					if(paymentPlan !== undefined && paymentPlan !== null && paymentPlan !== '0') {	
+						switch(paymentMethod) {
+							default:
+							case"stripe":
+								stripeHandler.open({
+									name: 'LVLUP Dojo',
+									email: paymentDetails.email,
+									description: paymentDetails.description,
+									currency: paymentDetails.amount.currency,
+									amount: paymentTotal,
+									panelLabel: "Pay {{ '{{' }}amount{{ '}}' }} "+paymentDetails.period
+								});
+							break;
+						}
+					} else {
+						swal("Error", "You've not selected a plan. Please select one before proceeding to payment.", "error");
+					}
+				});
+
+				window.addEventListener('popstate', function() {
+					stripeHandler.close();
+				});
+
+				// PayPal
+				$('button[name="paypal-button-container"]').click(function() {
+					if(!$(this).hasClass('d-none')) {
+						var paymentPlan = $('input[name="paymentPlan"]').val();
+
+						if(paymentPlan !== undefined && paymentPlan !== null && paymentPlan !== '0') {
+							swal({
+								title: "Preparing Agreement...",
+								icon: "info",
+								button: false,
+								text: "Please wait while we prepare your agreement. You'll be redirected to PayPal for confirmation on the agreement."
+							});
+
+							$('form[name="subscriptions"]').submit();
+						} else {
+							swal("Error", "You've not selected a plan. Please select one before proceeding to payment.", "error");
+						}
+					}
+				});
+            });
+        </script>
+    {% endif %}
+{% endblock %}

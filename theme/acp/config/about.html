@@ -1,0 +1,112 @@
+{% extends 'acp/base.html' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/froala_editor.pkgd.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/char_counter.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/code_view.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/colors.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/emoticons.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/file.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/fullscreen.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/image.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/image_manager.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/line_breaker.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/quick_insert.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/special_characters.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/table.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/video.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/themes/gray.min.css" type="text/css" />
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <form method="POST" enctype="multipart/form-data" action="" class="card">
+                <div class="card-header">
+                    <h3 class="card-title">About Us Contents</h3>
+                </div>
+                <div class="card-body">
+                    {% if success %}
+                        <div class="alert alert-success" role="alert">
+                            {{ success }}
+                        </div>
+                    {% else %}
+                        
+                        <div class="form-group">
+                            <label for="video" class="col-form-label">About Us Video</label>
+                            <input type="text" class="form-control" name="video" id="video" placeholder="About Us Video" value="{{ form.video }}" />
+                            <p class="text-muted">
+                                <small>YouTube Link to the About Us Video, leaving this blank will mean no video will be displayed on the About Us Page.</small>
+                            </p>
+                        </div>
+                        <div class="form-group">
+                            <label for="text" class="col-form-label">About Us</label>
+                            <textarea name="text" id="text">{{ form.text }}</textarea>
+                        </div>
+                    {% endif %}
+                </div>
+                {% if success is null %}
+                    <div class="card-footer text-center">
+                        <a href="{{ baseuri }}/admin/" class="btn btn-default">
+                            <i class="far fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary" name="updateConfig" id="updateConfig">
+                            Update Config                     
+                        </button>
+                    </div>
+                {% endif %}
+            </form>
+        </div>        
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/mode/xml/xml.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/froala_editor.pkgd.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/align.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/char_counter.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/code_view.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/colors.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/emoticons.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/entities.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/file.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/font_family.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/font_size.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/fullscreen.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/image.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/image_manager.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/inline_style.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/line_breaker.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/link.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/lists.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/paragraph_format.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/paragraph_style.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/print.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/quick_insert.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/quote.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/save.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/special_characters.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/table.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/url.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/video.min.js"></script>
+    <script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+        $(function() {
+            $('textarea#text').froalaEditor({
+                toolbarButtons: [
+                    'fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 
+                    'fontFamily', 'fontSize', 'color', 'inlineStyle', 'paragraphStyle', '|', 
+                    'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', '-', 'insertLink', 'insertTable', '|', 
+                    'emoticons', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 
+                    'print', 'spellChecker', 'help', 'html', '|', 
+                    'undo', 'redo'
+                ],
+                quickInsertTags: [''],
+                pluginsEnabled: null,
+                heightMin: 500,
+                theme: 'gray',
+            });
+        });
+    </script>
+{% endblock %}

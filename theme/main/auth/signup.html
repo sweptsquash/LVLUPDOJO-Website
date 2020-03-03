@@ -1,0 +1,225 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<section class="banner banner-half banner-grey header-shadow" style="background-image:url('{{ baseuri }}/img/Los-Angeles.jpg');">
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					<h1 class="mt-3 mb-4 text-center">Sign Up</h1>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="bg-grey diagonal-open-dark light text-dark pt-5 pb-5">
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					{% if registered %}
+						<div class="alert alert-success" role="alert">
+							Congratulations you have successfully registered to LVLUP Dojo, <a href="{{ baseuri }}/sign-in/">Sign In</a>.
+						</div>
+					{% else %}
+						<form class="needs-validation" name="signupMainForm" id="signupMainForm" method="post" action="{{ baseuri }}/sign-up/" autocomplete="on" novalidate>
+							<div class="row">
+								<div class="col-3">
+									<a href="{{ baseuri }}/twitch-authentication" class="btn btn-block btn-twitch{% if platforms.twitch == false %} disabled{% endif %}" title="Twitch">
+										<i class="fab fa-twitch"></i>
+									</a>
+								</div>
+								<div class="col-3">
+									<a href="{{ baseuri }}/facebook-authentication/" class="btn btn-block btn-facebook{% if platforms.facebook == false %} disabled{% endif %}" title="Facebook">
+										<i class="fab fa-facebook-f"></i>
+									</a>
+								</div>
+								<div class="col-3">
+									<a href="{{ baseuri }}/discord-authentication/" class="btn btn-block btn-discord{% if platforms.discord == false %} disabled{% endif %}" title="Discord">
+										<i class="fab fa-discord"></i>
+									</a>
+								</div>
+								<div class="col-3">
+									<a href="{{ baseuri }}/twitter-authentication/" class="btn btn-block btn-twitter{% if platforms.twitter == false %} disabled{% endif %}" title="Twitter">
+										<i class="fab fa-twitter"></i>
+									</a>
+								</div>
+							</div>
+							<div class="text-split text-split-dark">
+								<span>or continue with</span>
+							</div>
+							{% if form.error %}
+								<div class="row">
+									<div class="col-md-12">
+										<div class="alert alert-danger" role="alert">
+											<ul class="mb-0">
+												{% for message in form.error %}
+													<li>{{ message }}</li>
+												{% endfor %}
+											</ul>
+										</div>
+									</div>
+								</div>
+							{% endif %}
+							<div class="row">
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group" id="emailGroup">
+										<label for="signup-email" class="required">Email</label>
+										<input type="text" name="signup-email" id="signup-email" class="form-control" placeholder="Enter your email address" value="{{ form.email }}" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="A valid Email is required, Verification link will be sent upon completion." tabindex="1" required />
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group" id="usernameGroup" class="required">
+										<label for="signup-username" class="required">Username</label>
+										<input type="text" name="signup-username" id="signup-username" class="form-control" placeholder="Pick a username" value="{{ form.username }}" tabindex="2" autocomplete="new-username" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="May only contain numbers & letters. Must be between 3 and 20 characters." required />
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<label for="signup-password" class="required">Password</label>
+									<input type="password" name="signup-password" id="signup-password" class="form-control" placeholder="Create A Password" autocomplete="new-password" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="MUST be between 10 and 100 characters long and contain letters and numbers." tabindex="3" required />
+								</div>							
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<label class="required">Date Of Birth</label>
+										<div class="row">
+											<div class="col-4">
+												<select class="form-control" name="signup-dob-day" id="signup-dob-day" tabindex="4" required>
+													{% for i in 1..31 %}
+														<option value="{{ i }}"{% if form.dateofbirth[0] == i %} selected{% endif %}>{{ i }}</option>
+													{% endfor %}
+												</select>
+											</div>
+											<div class="col-4">
+												<select class="form-control" name="signup-dob-month" id="signup-dob-month" tabindex="5" required>
+													{% for month in 1..12 %}
+														{% set date = month ~ "/1/" ~ page.year %}
+														<option value="{{ date|date("m") }}"{% if form.dateofbirth[1] == date|date("m") %} selected{% endif %}>{{ date|date("F") }}</option>
+													{% endfor %}
+												</select>
+											</div>
+											<div class="col-4">
+												<select class="form-control" name="signup-dob-year" id="signup-dob-year" tabindex="6" required>
+													{% for i in 1930..page.year %}
+														<option value="{{ i }}"{% if form.dateofbirth[2] == i %} selected{% endif %}>{{ i }}</option>
+													{% endfor %}
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<label for="signup-first-name">First Name</label>
+										<input type="text" name="signup-first-name" id="signup-first-name" class="form-control" placeholder="First Name..." value="{{ form.forename }}" tabindex="7" />
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<label for="signup-last-name">Last Name</label>
+										<input type="text" name="signup-last-name" id="signup-last-name" class="form-control" placeholder="Last Name..." value="{{ form.surname }}" tabindex="8" />
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<label for="signup-format">Date Format</label>
+										<select name="signup-format" id="signup-format" class="form-control" tabindex="9">
+											{{ options.format }}
+										</select>
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<label for="signup-timezone">Timezone</label>
+										<select name="signup-timezone" id="signup-timezone" class="form-control" tabindex="10">
+											{{ options.timezone }}
+										</select>
+									</div>
+								</div>
+
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<label for="signup-location">Country</label>
+										<select name="signup-location" id="signup-location" class="form-control" tabindex="11">
+											{% for short, country in countries %}
+												<option value="{{ short }}"{% if short == form.location %} selected{% endif %}>{{ country }}</option>
+											{% endfor %}
+										</select>
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<label for="signup-info">Where did you hear about us?</label>
+										<select name="signup-info" id="signup-info" class="form-control" tabindex="12">
+											<option value=""{% if form.info is null %} selected{% endif %}>Prefer not to say.</option>
+											<option value="udemy"{% if form.info =='udemy' %} selected{% endif %}>Udemy</option>
+											<option value="friend"{% if form.info == 'friend' %} selected{% endif %}>Friend</option>
+											<option value="social"{% if form.info == 'social' %} selected{% endif %}>Social Media</option>
+											<option value="twitch"{% if form.info == 'twitch' %} selected{% endif %}>Twitch</option>
+											<option value="mixer"{% if form.info == 'mixer' %} selected{% endif %}>Mixer</option>
+											<option value="mentor"{% if form.info == 'mentor' %} selected{% endif %}>Course Mentor</option>
+										</select>
+									</div>
+								</div>	
+								<div class="col-md-12">
+									<div class="card-deck text-dark">
+										{% for key, option in pricing %}
+											<div class="card mb-4 box-shadow">
+												<div class="card-header">
+													<h4 class="my-0 font-weight-normal text-center">{{ option.name }}</h4>
+												</div>
+												<div class="card-body">
+													<h1 class="card-title pricing-card-title text-center">
+														${{ option.cost }} <small>/ {% if option.period == 'Month' %}mo{% else %}yr{% endif %}</small>
+													</h1>
+													{{ option.description }}
+													<button type="button" class="btn btn-lg btn-block btn-{% if form.plan == option.id %}success active{% else %}primary{% endif %}" data-plan="{{ option.id }}">
+														{% if form.plan == option.id %}Selected{% else %}Select Plan{% endif %}
+													</button>
+												</div>
+											</div>
+										{% endfor %}
+									</div>
+								</div>
+								<div class="col-md-12 text-center">
+									<div class="form-group">
+										<div class="g-recaptcha" data-theme="light" data-sitekey="{{ config.recaptcha_key }}"></div>
+									</div>
+									<div class="form-group">
+										<p class="text-muted">
+											<small>By clicking Sign Up, you are indicating that you have read and agree to the <a href="{{ baseuri }}/terms-and-conditions/" target="_blank">Terms &amp; Conditions</a> and <a href="{{ baseuri }}/privacy-policy/" target="_blank">Privacy Policy</a></small>
+										</p>
+									</div>
+									<div class="form-group">
+										<input type="hidden" name="CSRFName" value="{{ form.CSRF[0] }}" />
+										<input type="hidden" name="CSRFToken" value="{{ form.CSRF[1] }}" />
+										<input type="hidden" name="signup-plan" value="{{ form.plan }}" />
+										<button type="submit" name="sign-up" id="sign-up" tabindex="13" class="btn btn-primary">Sign Up</button>
+									</div>
+								</div>
+							</div>
+						</form>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</section>
+{% endblock %}
+
+{% block javascripts %}
+	<script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+		$(function() {
+			$('.btn[data-plan]').on('click', function(e) {
+				e.preventDefault();
+
+				$('.btn-success.active[data-plan]').removeClass('btn-success').removeClass('active').addClass('btn-primary').html('Select Plan');
+				$(this).removeClass('btn-primary').addClass('btn-success').addClass('active').html('Selected');
+
+				var planID = $(this).data('plan');
+
+				$('input[name="signup-plan"]').val(planID);
+
+				if(typeof fbq === 'function') {
+					fbq('track', '{% if registered %}CompleteRegistration{% else %}Lead{% endif %}');
+				}
+			});
+		});
+	</script>
+{% endblock %}

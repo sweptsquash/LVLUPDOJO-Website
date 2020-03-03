@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="dns-prefetch" href="https://www.google.com" />
+		<link rel="dns-prefetch" href="https://www.google-analytics.com" />
+		<link rel="dns-prefetch" href="https://connect.facebook.net" />
+		<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+		<link rel="dns-prefetch" href="https://player.vimeo.com" />
+		<link rel="preload" href="{{ rooturi }}/fonts/fa-brands-400.woff2" as="font" crossorigin type="font/woff2" />
+		<link rel="preload" href="{{ rooturi }}/fonts/fa-solid-900.woff2" as="font" crossorigin type="font/woff2" />
+		<link rel="preload" href="{{ rooturi }}/fonts/Poppins-Latin-700.woff2" as="font" crossorigin type="font/woff2" />
+		<title>{{ page.title }}</title>
+		<link rel="apple-touch-icon" sizes="57x57" href="{{ baseuri }}/img/Icon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="{{ baseuri }}/img/Icon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="{{ baseuri }}/img/Icon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="{{ baseuri }}/img/Icon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="{{ baseuri }}/img/Icon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="{{ baseuri }}/img/Icon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="{{ baseuri }}/img/Icon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="{{ baseuri }}/img/Icon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="{{ baseuri }}/img/Icon/apple-icon-180x180.png">
+		<meta name="apple-mobile-web-app-title" content="LVLUp Dojo" />
+		<link rel="icon" type="image/png" sizes="192x192"  href="{{ baseuri }}/img/Icon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="{{ baseuri }}/img/Icon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="{{ baseuri }}/img/Icon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="{{ baseuri }}/img/Icon/favicon-16x16.png">
+		<link rel="icon" href="{{ baseuri }}/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="{{ baseuri }}/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="{{ baseuri }}/favicon.ico" type="image/ico" />
+		<link rel="manifest" href="{{ baseuri }}/manifest.json">
+		<meta name="application-name" content="LVLUp Dojo" />
+		<meta name="msapplication-TileColor" content="#131010">
+		<meta name="msapplication-TileImage" content="{{ baseuri }}/img/Icon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#131010">
+		<link rel="canonical" href="{{ rooturi }}/{{ page.url }}" />
+		<link rel="stylesheet" href="{{ baseuri }}/css/bootstrap-4.min.css?v=4.0.0" type="text/css" media="all" />
+		<link rel="stylesheet" href="{{ baseuri }}/css/datatables.min.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="{{ baseuri }}/css/application.css?v=0.1.9" type="text/css" media="all" />
+		<link rel="stylesheet" href="{{ baseuri }}/css/dashboard.css?v=1.0.6" type="text/css" />
+		<link rel="stylesheet" href="{{ baseuri }}/plugins/charts-c3/plugin.css?v=1.0.0" type="text/css" />
+		<link rel="stylesheet" href="{{ baseuri }}/plugins/maps-google/plugin.css?v=1.0.0" type="text/css" />
+		{% block stylesheets %}{% endblock %}
+	</head>
+
+	<body>
+		<div class="page">
+      		<div class="page-{% if single is null %}single{% else %}main{% endif %}">
+				{% if single is not null %}
+					<div class="header">
+						<div class="container">
+							<div class="d-flex">
+								<a class="navbar-brand" href="{{ baseuri }}/">
+									<img src="{{ baseuri }}/img/lvlup-dojo-banner-logo.png" class="navbar-brand-img" alt="LVLUP Dojo">
+								</a>
+								<div class="ml-auto d-flex order-lg-2">
+									<div class="dropdown">
+										<a href="#" class="nav-link pr-0" data-toggle="dropdown">
+											<span class="avatar" style="background-image: url('{{ baseuri }}{% if user.user_avatar is not null %}{{ user.user_avatar }}{% else %}/img/user/User-160x160.png{% endif %}')"></span>
+											<span class="ml-2 d-none d-lg-block">
+												<span class="text-default">{{ user.name }}</span>
+												<small class="text-muted d-block mt-1">{{ user.group.name }}</small>
+											</span>
+										</a>
+										<div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+											<a class="dropdown-item" href="{{ rooturi }}">
+												<i class="dropdown-icon fe fe-arrow-left"></i> Return to Site
+											</a>
+											<div class="dropdown-divider"></div>
+											<a class="dropdown-item" href="{{ rooturi }}/dashboard/account/" title="Account">
+												<i class="dropdown-icon fe fe-user"></i> Account
+											</a>
+											<a class="dropdown-item" href="{{ rooturi }}/dashboard/security/" title="Security">
+												<i class="dropdown-icon fe fe-shield"></i> Security
+											</a>
+											<a class="dropdown-item" href="{{ rooturi }}/dashboard/billing/" title="Billing">
+												<i class="dropdown-icon fe fe-credit-card"></i> Billing
+											</a>
+											<a class="dropdown-item" href="{{ rooturi }}/dashboard/courses/" title="My Courses">
+												<i class="dropdown-icon fe fe-book"></i> My Courses
+											</a>
+											{#{% if user.username_clean is not null %}
+												<a class="dropdown-item" href="{{ rooturi }}/profile/{{ user.username_clean }}" title="My Profile">
+													<i class="dropdown-icon fe fe-user"></i> My Profile
+												</a>
+											{% endif %}#}
+											<div class="dropdown-divider"></div>
+											<a class="dropdown-item" href="{{ rooturi }}/sign-out/">
+												<i class="dropdown-icon fe fe-log-out"></i> Sign out
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="header-nav d-none d-lg-flex">
+						<div class="container">
+							<div class="row align-items-center">
+								<div class="col">
+									<ul class="nav nav-tabs">
+										<li class="nav-item">
+											<a href="{{ baseuri }}/admin/" class="nav-link{% if nav is null %} active{% endif %}">
+												<i class="fe fe-home"></i> Home
+											</a>
+										</li>
+										<li class="nav-item">
+											<a href="{{ baseuri }}/admin/analytics/" class="nav-link{% if nav == 'analytics' %} active{% endif %}">
+												<i class="fe fe-bar-chart"></i> Analytics
+											</a>
+											<div class="nav-submenu nav">
+												<a href="#" class="nav-item ">Coming Soon</a>
+											</div>
+										</li>
+										<li class="nav-item">
+											<a href="{{ baseuri }}/admin/courses/" class="nav-link{% if nav == 'courses' %} active{% endif %}">
+												<i class="fe fe-video"></i> Courses
+											</a>
+											<div class="nav-submenu nav">
+												<a href="{{ baseuri }}/admin/courses/c/" class="nav-item ">Create Course</a>
+												<a href="{{ baseuri }}/admin/courses/" class="nav-item ">List Courses</a>
+											</div>
+										</li>
+										<li class="nav-item">
+											<a href="{{ baseuri }}/admin/mentors/" class="nav-link{% if nav == 'mentors' %} active{% endif %}">
+												<i class="fe fe-users"></i> Mentors
+											</a>
+											<div class="nav-submenu nav">
+												<a href="{{ baseuri }}/admin/mentors/c/" class="nav-item ">Add Mentor</a>
+												<a href="{{ baseuri }}/admin/mentors/" class="nav-item ">List Mentors</a>
+											</div>
+										</li>
+										<li class="nav-item">
+											<a href="{{ baseuri }}/admin/pricing/" class="nav-link{% if nav == 'pricing' %} active{% endif %}">
+												<i class="fe fe-dollar-sign"></i> Pricing
+											</a>
+											<div class="nav-submenu nav">
+												<a href="{{ baseuri }}/admin/pricing/c/" class="nav-item ">Add Pricing Option</a>
+												<a href="{{ baseuri }}/admin/pricing/" class="nav-item ">Pricing Options</a>
+												<a href="{{ baseuri }}/admin/pricing/discount/c/" class="nav-item ">Add Discount</a>
+												<a href="{{ baseuri }}/admin/pricing/discount/" class="nav-item ">Discounts</a>
+												<a href="{{ baseuri }}/admin/pricing/courses/" class="nav-item ">Course Pricing</a>
+											</div>
+										</li>
+										<li class="nav-item">
+											<a href="{{ baseuri }}/admin/users/" class="nav-link{% if nav == 'users' %} active{% endif %}">
+												<i class="fe fe-users"></i> Users
+											</a>
+										</li>
+										<li class="nav-item">
+											<a href="{{ baseuri }}/admin/team/" class="nav-link{% if nav == 'team' %} active{% endif %}">
+												<i class="fe fe-users"></i> Team
+											</a>
+											<div class="nav-submenu nav">
+												<a href="{{ baseuri }}/admin/team/c/" class="nav-item ">Add Member</a>
+												<a href="{{ baseuri }}/admin/team/" class="nav-item ">List Members</a>
+											</div>
+										</li>
+										<li class="nav-item">
+											<a href="{{ baseuri }}/admin/config/" class="nav-link{% if nav == 'config' %} active{% endif %}">
+												<i class="fe fe-server"></i> Configuration
+											</a>
+											<div class="nav-submenu nav">
+												<a href="{{ baseuri }}/admin/config/about/" class="nav-item ">Edit About Us</a>
+												<a href="{{ baseuri }}/admin/config/legal/" class="nav-item ">Edit Legal</a>
+												<a href="{{ baseuri }}/admin/config/defaults/" class="nav-item ">Edit Defaults</a>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="page-content">
+						<div class="container">
+				{% endif %}		
+						
+				{% block body %}{% endblock %}	
+						
+				{% if single is null %}
+						</div>
+					</div>
+				{% endif %}
+			</div>
+			{% if single is null %}
+				<footer class="footer">
+					<div class="container">
+						<div class="row align-items-center flex-row-reverse">
+							<div class="col-12 col-lg-auto mt-3 mt-lg-0 text-center">
+								Copyright &copy; {{ page.year }} LVLUP Dojo. Theme by <a href="https://codecalm.net" target="_blank">codecalm.net</a> All rights reserved.
+							</div>
+						</div>
+					</div>
+				</footer>
+			{% endif %}
+		</div>
+		<script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+			var baseuri = '{{ baseuri }}';
+			
+			window.tabler = {
+				colors: {
+					'blue': '#467fcf',
+					'blue-darkest': '#0e1929',
+					'blue-darker': '#1c3353',
+					'blue-dark': '#3866a6',
+					'blue-light': '#7ea5dd',
+					'blue-lighter': '#c8d9f1',
+					'blue-lightest': '#edf2fa',
+					'azure': '#45aaf2',
+					'azure-darkest': '#0e2230',
+					'azure-darker': '#1c4461',
+					'azure-dark': '#3788c2',
+					'azure-light': '#7dc4f6',
+					'azure-lighter': '#c7e6fb',
+					'azure-lightest': '#ecf7fe',
+					'indigo': '#6574cd',
+					'indigo-darkest': '#141729',
+					'indigo-darker': '#282e52',
+					'indigo-dark': '#515da4',
+					'indigo-light': '#939edc',
+					'indigo-lighter': '#d1d5f0',
+					'indigo-lightest': '#f0f1fa',
+					'purple': '#a55eea',
+					'purple-darkest': '#21132f',
+					'purple-darker': '#42265e',
+					'purple-dark': '#844bbb',
+					'purple-light': '#c08ef0',
+					'purple-lighter': '#e4cff9',
+					'purple-lightest': '#f6effd',
+					'pink': '#f66d9b',
+					'pink-darkest': '#31161f',
+					'pink-darker': '#622c3e',
+					'pink-dark': '#c5577c',
+					'pink-light': '#f999b9',
+					'pink-lighter': '#fcd3e1',
+					'pink-lightest': '#fef0f5',
+					'red': '#e74c3c',
+					'red-darkest': '#2e0f0c',
+					'red-darker': '#5c1e18',
+					'red-dark': '#b93d30',
+					'red-light': '#ee8277',
+					'red-lighter': '#f8c9c5',
+					'red-lightest': '#fdedec',
+					'orange': '#fd9644',
+					'orange-darkest': '#331e0e',
+					'orange-darker': '#653c1b',
+					'orange-dark': '#ca7836',
+					'orange-light': '#feb67c',
+					'orange-lighter': '#fee0c7',
+					'orange-lightest': '#fff5ec',
+					'yellow': '#f1c40f',
+					'yellow-darkest': '#302703',
+					'yellow-darker': '#604e06',
+					'yellow-dark': '#c19d0c',
+					'yellow-light': '#f5d657',
+					'yellow-lighter': '#fbedb7',
+					'yellow-lightest': '#fef9e7',
+					'lime': '#7bd235',
+					'lime-darkest': '#192a0b',
+					'lime-darker': '#315415',
+					'lime-dark': '#62a82a',
+					'lime-light': '#a3e072',
+					'lime-lighter': '#d7f2c2',
+					'lime-lightest': '#f2fbeb',
+					'green': '#5eba00',
+					'green-darkest': '#132500',
+					'green-darker': '#264a00',
+					'green-dark': '#4b9500',
+					'green-light': '#8ecf4d',
+					'green-lighter': '#cfeab3',
+					'green-lightest': '#eff8e6',
+					'teal': '#2bcbba',
+					'teal-darkest': '#092925',
+					'teal-darker': '#11514a',
+					'teal-dark': '#22a295',
+					'teal-light': '#6bdbcf',
+					'teal-lighter': '#bfefea',
+					'teal-lightest': '#eafaf8',
+					'cyan': '#17a2b8',
+					'cyan-darkest': '#052025',
+					'cyan-darker': '#09414a',
+					'cyan-dark': '#128293',
+					'cyan-light': '#5dbecd',
+					'cyan-lighter': '#b9e3ea',
+					'cyan-lightest': '#e8f6f8',
+					'gray': '#868e96',
+					'gray-darkest': '#1b1c1e',
+					'gray-darker': '#36393c',
+					'gray-dark': '#6b7278',
+					'gray-light': '#aab0b6',
+					'gray-lighter': '#dbdde0',
+					'gray-lightest': '#f3f4f5',
+					'gray-dark': '#343a40',
+					'gray-dark-darkest': '#0a0c0d',
+					'gray-dark-darker': '#15171a',
+					'gray-dark-dark': '#2a2e33',
+					'gray-dark-light': '#717579',
+					'gray-dark-lighter': '#c2c4c6',
+					'gray-dark-lightest': '#ebebec'
+				}
+			};
+		</script>
+		<script type="text/javascript" src="{{ baseuri }}/js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="{{ baseuri }}/js/jquery-ui-1.12.1.min.js"></script>
+		<script type="text/javascript" src="{{ baseuri }}/js/bootstrap.bundle.min.js?v=4.0.0"></script>
+		<script type="text/javascript" src="{{ baseuri }}/js/sweetalert.min.js?v=2.1.0" async></script>
+		<script type="text/javascript" src="{{ baseuri }}/js/owl.carousel.min.js" async></script>
+		<script type="text/javascript" src="{{ baseuri }}/js/jquery.barrating.min.js" async></script>
+        {% block javascripts %}{% endblock %}
+	</body>
+</html>

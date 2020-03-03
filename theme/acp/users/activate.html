@@ -1,0 +1,33 @@
+{% extends 'acp/base.html' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Activate User "{{ u.user_email }}"</h3>
+                </div>
+                <div class="card-body text-center">
+                    {% if success %}
+                        <div class="alert alert-success" role="alert">
+                            User "{{ u.user_email }}" Activated.
+                        </div>
+                    {% else %}
+                        <form method="POST" enctype="multipart/form-data" action="">
+                            <p>Are you sure you want to activate this user?</p>:</strong> Deactivating a user means they will be unable to login and access the service.
+                            </p>
+                            <button type="submit" class="btn btn-success" name="submit" id="submit">
+                                <i class="fas fa-user-check"></i> Yes, Activate User
+                            </button> 
+                            <a href="{{ rooturi }}/admin/users/" class="btn btn-danger">
+                                <i class="fas fa-times"></i> No, Cancel
+                            </a>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

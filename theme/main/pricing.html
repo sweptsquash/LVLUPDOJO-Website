@@ -1,0 +1,126 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<header class="parallax-banner small-banner header-shadow bg-dark-grey">
+		<div class="image" style="background-image:url({{ baseuri }}{{ config.default_banner }});"></div>
+		<div class="container">
+			<div class="row pb-5 mb-5">
+				<div class="col-12 text-center pb-5 mb-5">
+					<h1><i class="fas fa-dollar-sign"></i> Pricing</h1>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="clip-path-fix pb-4">
+		<div class="container">
+			<div class="row text-center mb-3">
+				<div class="col-sm-6 col-md-3">
+					<i class="fas fa-users fa-3x mb-2"></i>
+					<p>Proven Methods to Grow Your Stream.</p>
+				</div>
+				<div class="col-sm-6 col-md-3">
+					<i class="fas fa-video fa-3x mb-2"></i>
+					<p>From Thumbnails to Scheduling: Become a Content Creating Machine.</p>
+				</div>
+				<div class="col-sm-6 col-md-3">
+					<i class="fas fa-badge-check fa-3x mb-2"></i>
+					<p>Access to partnered stream team, auto hosts and sponsorship opportunities.</p>
+				</div>
+				<div class="col-sm-6 col-md-3">
+					<i class="fas fa-gamepad fa-3x mb-2"></i>
+					<p>Master the Mindset and Practice Regimens of the Pros.</p>
+				</div>
+			</div>
+			<div class="row text-center">
+				<div class="col-sm-6 col-md-3">
+					<i class="fas fa-percent fa-3x mb-2"></i>
+					<p>Sign up through your favorite teacher’s course page to donate 50% of your member dues to them.</p>
+				</div>
+				<div class="col-sm-6 col-md-3">
+					<i class="fas fa-cogs fa-3x mb-2"></i>
+					<p>Learn from the best, we only work with the top competitors and creators.</p>
+				</div>
+				<div class="col-sm-6 col-md-3">
+					<i class="fab fa-discord fa-3x mb-2"></i>
+					<p>Interact with members, founders and course teachers in the private discord community.</p>
+				</div>
+				<div class="col-sm-6 col-md-3">
+					<i class="fas fa-calendar-alt fa-3x mb-2"></i>
+					<p>30 Day Money Back, Cancel Whenever.</p>
+				</div>
+			</div>	
+		</div>
+	</section>
+	<section class="bg-grey diagonal-close-dark diagonal-open-dark light text-dark pt-5 pb-5">
+		<div class="container">	
+			{% if pricing is not null %}
+				<div class="row">
+					<div class="col-12">
+						<div class="table-responsive">
+							<table class="table table-bordered">
+								<thead class="thead-light">
+									<tr>
+										<th>&nbsp;</th>
+										{% for key, option in pricing %}
+											<th class="align-middle text-center">
+												<h5>{{ option.name }}</h5>
+												<p class="mb-0">
+													{% if option.slug == 'free' %}
+														&nbsp;
+													{% else %}
+														${{ option.cost }} <small class="text-muted">/ {% if option.period == 'Month' %}mo{% else %}yr{% endif %}</small>
+													{% endif %}
+												</p>
+											</th>
+										{% endfor %}
+									</tr>
+								</thead>
+								<tbody>
+									{% for key, option in pricingOptions %}
+										<tr>
+											<td class="align-middle">
+												{{ option.name }} {% if option.description is not null %}<i class="fa fa-question-circle text-dark" data-container="body" data-toggle="popover" data-placement="right" data-content="{{ option.description }}"></i>{% endif %}
+											</td>
+											{% for plankey, plan in pricing %}
+												<td class="align-middle text-center">
+													{% if option.plans[plankey] is not null %}<i class="far fa-check text-success"></i>{% else %}<i class="far fa-times text-danger"></i>{% endif %}
+												</td>
+											{% endfor %}
+										</tr>
+									{% endfor %}
+								</tbody>
+								<tfoot>
+									<tr>
+										<td>&nbsp;</td>
+										{% if user.is_registered %}
+											<td class="text-center" colspan="4">
+												<a href="{{ baseuri }}/dashboard/billing/" class="btn btn-primary">Manage My Subscription</a>
+											</td>
+										{% else %}
+											{% for plankey, plan in pricing %}
+												<td class="align-middle text-center">
+													<a href="{{ baseuri }}/sign-up/{% if plan.slug != 'free' %}{{ plan.slug }}/{% endif %}" class="btn btn-lg btn-block btn-{% if plan.slug == 'free' %}outline-{% endif %}primary">
+														{% if plan.cost == 0 %}
+															Sign up for free <br /> &nbsp;
+														{% else %}
+															Get Started <br /> ${{ plan.cost }} <small>/ {% if plan.period == 'Month' %}mo{% else %}yr{% endif %}</small>
+														{% endif %}
+													</a>
+												</td>
+											{% endfor %}
+										{% endif %}
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+					</div>
+				</div>
+			{% else %}
+				<div class="alert alert-danger">No Pricing Found...</div>
+			{% endif %}
+		</div>
+	</section>
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

@@ -1,0 +1,170 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+    <header class="parallax-banner small-banner header-shadow bg-dark-grey">
+        <div class="image" style="background-image:url({{ baseuri }}{{ config.default_banner }});"></div>
+        <div class="container">
+            <div class="row pb-5 mb-5">
+                <div class="col-12 text-center pb-5 mb-5">
+                    <h2><i class="fas fa-shopping-cart"></i> Shopping Cart</h2>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="bg-grey diagonal-open-dark light py-5 clip-path-fix text-dark">
+        <form class="container" name="cartCheckout" method="POST" enctype="application/x-www-form-urlencoded" action="/cart/checkout/">
+            {% if user.cart.items|length == 0 %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="alert alert-danger" role="alert">Your cart is empty...</div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-12">
+                        <table id="cartTable" class="mb-3 table bg-light table-bordered" cellspacing="0" cellpadding="0" border="0">
+                            <thead>
+                                <tr>
+                                    <th>&nbsp;</th>
+                                    <th>Product Name</th>
+                                    <th class="text-center">Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in user.cart.items %}
+                                    <tr id="cartTblItem{{ item.id }}" data-id="{{ item.id }}">
+                                        <td class="align-middle" width="10%">
+                                            <img src="{{ item.thumbnail }}" height="" width="140" alt="{{ item.name }}" />
+                                        </td>
+                                        <td class="align-middle">
+                                            <p class="mb-1">
+                                                <a href="{{ baseuri }}/courses/{{ item.slug }}/" id="cartItem{{ item.id }}Name">{{ item.name }}</a>
+                                            </p>
+                                            <p>
+                                                By: <a href="{{ baseuri }}/courses/m/{{ item.mentor.slug }}/">{{ item.mentor.name }}</a>
+                                            </p>
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            {% if item.cost.discount is not null %}
+                                                <small>
+                                                    <s>${{ item.cost.price }}</s>
+                                                </small><br /><strong id="cost">$<span id="priceContainer">{{ item.cost.discount_value }}</span></strong>
+                                            {% else %}
+                                                <strong id="cost">$<span id="priceContainer">{{ item.cost.price }}</span></strong>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2" class="text-right font-weight-bold">Total</td>
+                                    <td class="text-center font-weight-bold">$<span id="cartTotal">{{ user.cart.cost }}</span></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <div class="list-group mb-3">
+                            <div class="list-group-item">
+                                <div class="row radio">
+                                    <div class="col-xs-3 col-md-3">
+                                        <label class="mb-0">
+                                            <input type="radio" value="stripe" name="paymentMethod" id="method1" class="mr-2" checked />
+                                            Credit/Debit Card
+                                        </label>
+                                    </div>
+                                    <div class="col-xs-9 col-md-9">
+                                        <img src="{{ cdnuri }}/img/cards.png" height="24" width="" alt="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="row radio">
+                                    <div class="col-xs-3 col-md-3">
+                                        <label class="mb-0">
+                                            <input type="radio" value="paypal" name="paymentMethod" id="method2" class="mr-2" />
+                                            PayPal
+                                        </label>
+                                    </div>
+                                    <div class="col-xs-9 col-md-9">
+                                        <img src="{{ cdnuri }}/img/paypalcard.png" height="24" width="" alt="" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <a href="{{ baseuri }}/" class="btn btn-secondary">
+                            <i class="fas fa-chevron-left"></i> Continue Shopping
+                        </a>
+                    </div>
+                    <div class="col-6 text-right">
+                        <button type="button" class="btn btn-secondary" data-action="clearItems" data-item="clear">
+                            <i class="fas fa-times"></i> Clear Cart
+                        </button>
+                        <button type="button" name="proceedCheckout" id="proceedCheckoutBtn" class="btn btn-primary">
+                            <i class="fas fa-shopping-cart"></i> Place Order
+                        </button>
+                        <div id="paypal-button-container" class="d-none"></div>
+
+                        <input type="hidden" name="paymentToken" value="" />
+                        <input type="hidden" name="paymentEmail" value="" />
+                        <input type="hidden" name="paymentID" value="" />
+                    </div>
+                </div>
+            {% endif %}
+        </form>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {% if user.cart.items|length > 0 %}
+        <script type="text/javascript" src="https://checkout.stripe.com/checkout.js"></script>
+        <script type="text/javascript" src="https://www.paypalobjects.com/api/checkout.js"></script>
+        <script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+            var paymentConfig = {
+                    paypal: '{% if dev %}{{ config.paypal_key_dev }}{% else %}{{ config.paypal_key }}{% endif %}',
+                    stripe: '{% if dev %}{{ config.stripe_key_dev }}{% else %}{{ config.stripe_key }}{% endif %}'
+                },
+                paymentDetails = {
+                    amount: {
+                        total: '{{ user.cart.cost }}',
+                        currency: 'USD'
+                    },
+                    email: '{{ user.user_email }}',
+                    description: '',
+                    itemIDs: [
+                        {% if user.cart.items|length > 0 %}
+                            {% for item in user.cart.items %}
+                                '{{ item.id }}',
+                            {% endfor %}
+                        {% endif %}
+                    ],
+                    items: [
+                        {% if user.cart.items|length > 0 %}
+                            {% for item in user.cart.items %}
+                                {
+                                    name: '{{ item.name }}',
+                                    sku: '{{ item.id }}',
+                                    price: '{% if item.cost.discount is not null %}{{ item.cost.discount_value }}{% else %}{{ item.cost.price }}{% endif %}',
+                                    currency: 'USD',
+                                    quantity: '1'
+                                },
+                            {% endfor %}
+                        {% endif %}
+                    ]
+                };       
+                
+            $('#cartTable > tbody > tr').each(function() {
+                var itemID = $(this).data('id');
+
+                paymentDetails.description += $('#cartItem' + itemID + 'Name', this).html() + ', ';
+            });
+
+            paymentDetails.description = paymentDetails.description.replace(/, +$/,'');
+        </script>
+        <script type="text/javascript" src="{{ cdnuri }}/js/jquery-dojo-checkout.js?v=0.1.1"></script>
+    {% endif %}
+{% endblock %}

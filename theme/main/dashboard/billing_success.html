@@ -1,0 +1,77 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<header class="parallax-banner small-banner header-shadow bg-dark-grey">
+		<div class="image"  style="background-image:url('{{ baseuri }}{{ config.default_banner }}');"></div>
+		<div class="container">
+			<div class="row pb-5 mb-5">
+				<div class="col-12 text-center pb-5 mb-5">
+					<h1>Billing - Plan Management</h1>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="bg-white diagonal-open-dark text-dark py-5 clip-path-fix">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3">
+					<div class="list-group">
+						<a href="{{ baseuri }}/dashboard/" class="list-group-item list-group-item-action">
+							<i class="fas fa-book"></i> My Courses
+						</a>
+						<a href="{{ baseuri }}/dashboard/account/" class="list-group-item list-group-item-action">
+							<i class="fas fa-user"></i> Account
+						</a>
+						<a href="{{ baseuri }}/dashboard/remove/" class="list-group-item list-group-item-action">
+							<i class="fas fa-user-times"></i> Delete Account
+						</a>
+						<a href="{{ baseuri }}/dashboard/security/" class="list-group-item list-group-item-action">
+							<i class="fas fa-shield-alt"></i> Security
+						</a>
+						<a href="{{ baseuri }}/dashboard/billing/" class="list-group-item list-group-item-action active">
+							<i class="fas fa-credit-card"></i> Billing
+						</a>
+						<a href="{{ baseuri }}/dashboard/connections/" class="list-group-item list-group-item-action">
+							<i class="fas fa-link"></i> Connections
+						</a>
+					</div>
+				</div>
+				<div class="col-md-9 text-center">
+                    {% if error %}
+                        <p>
+                            <div class="swal-icon swal-icon--error">
+                                <div class="swal-icon--error__x-mark">
+                                    <span class="swal-icon--error__line swal-icon--error__line--left"></span>
+                                    <span class="swal-icon--error__line swal-icon--error__line--right"></span>
+                                </div>
+                            </div>
+                        </p>
+                        <div class="alert alert-danger text-left" role="alert">
+                            <ul class="mb-0">
+                                {% for message in error %}
+                                    <li>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% else %}
+						<p>
+                            <div class="swal-icon swal-icon--success">
+                                <span class="swal-icon--success__line swal-icon--success__line--long"></span>
+                                <span class="swal-icon--success__line swal-icon--success__line--tip"></span>
+                            
+                                <div class="swal-icon--success__ring"></div>
+                                <div class="swal-icon--success__hide-corners"></div>
+                            </div>
+						</p>
+						<h3>Membership Upgraded</h3>
+						<p>Order <strong>{{ invoice_number }}</strong> processed.</p>
+						<p><a href="{{ baseuri }}/dashboard/" rel="noopener">Click Here</a> to go to your Course Library.</p>
+					{% endif %}
+                </div>
+            </div>		
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

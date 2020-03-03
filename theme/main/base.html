@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en" itemscope itemtype="{% if article %}http://schema.org/Article{% else %}http://schema.org/WebSite{% endif %}">
+    <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb#{% if article %} article: http://ogp.me/ns/article#{% endif %}{% if product %} product: http://ogp.me/ns/product#{% endif %}">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="dns-prefetch" href="https://www.google.com" />
+		<link rel="dns-prefetch" href="https://www.google-analytics.com" />
+		<link rel="dns-prefetch" href="https://connect.facebook.net" />
+		<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+		<link rel="dns-prefetch" href="https://player.vimeo.com" />
+		<link rel="preload" href="{{ rooturi }}/fonts/fa-brands-400.woff2" as="font" crossorigin type="font/woff2" />
+		<link rel="preload" href="{{ rooturi }}/fonts/fa-solid-900.woff2" as="font" crossorigin type="font/woff2" />
+		<link rel="preload" href="{{ rooturi }}/fonts/Poppins-Latin-700.woff2" as="font" crossorigin type="font/woff2" />
+		<title>{{ page.title }}</title>
+		<link rel="apple-touch-icon" sizes="57x57" href="{{ baseuri }}/img/Icon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="{{ baseuri }}/img/Icon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="{{ baseuri }}/img/Icon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="{{ baseuri }}/img/Icon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="{{ baseuri }}/img/Icon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="{{ baseuri }}/img/Icon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="{{ baseuri }}/img/Icon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="{{ baseuri }}/img/Icon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="{{ baseuri }}/img/Icon/apple-icon-180x180.png">
+		<meta name="apple-mobile-web-app-title" content="LVLUp Dojo" />
+		<link rel="icon" type="image/png" sizes="192x192"  href="{{ baseuri }}/img/Icon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="{{ baseuri }}/img/Icon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="{{ baseuri }}/img/Icon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="{{ baseuri }}/img/Icon/favicon-16x16.png">
+		<link rel="icon" href="{{ baseuri }}/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="{{ baseuri }}/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="{{ baseuri }}/favicon.ico" type="image/ico" />
+		<link rel="manifest" href="{{ baseuri }}/manifest.json">
+		<meta name="application-name" content="LVLUp Dojo" />
+		<meta name="msapplication-TileColor" content="#131010">
+		<meta name="msapplication-TileImage" content="{{ baseuri }}/img/Icon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#131010">
+		<link rel="canonical" href="{{ rooturi }}/{{ page.url }}" />
+		<link href="{{ page.social.google }}" rel="publisher" />
+		{{ meta }}
+		<meta name="description" content="{{ page.description }}" />
+		<meta name="keywords" content="{{ page.keywords }}" />
+		<meta name="robots" content="INDEX, FOLLOW">
+		<meta name="author" content="LVLUP Dojo" />
+		<meta property="fb:pages" content="1618982205092330" />
+		<meta property="fb:app_id" content="1903625909729908" />
+		<meta property="og:site_name" content="LVLUP Dojo" />
+		<meta property="og:locale" content="en_GB" />
+		<meta property="og:title" content="{{ page.title }}" />
+		<meta property="og:description" content="{{ page.description }}" />
+		<meta property="og:url" content="{{ rooturi }}/{{ page.url }}" />
+		<meta property="og:image" content="https://www.lvlupdojo.com{{ page.image }}" />
+		<meta name="twitter:site" content="@{{ page.social.twitter }}" />
+		<meta name="twitter:title" content="{{ page.title }}" />
+		<meta name="twitter:description" content="{{ page.description }}" />
+		<meta name="twitter:image" content="https://www.lvlupdojo.com{{ page.image }}" />
+		{% if article %}
+			<link rel="amphtml" href="https://www.lvlupdojo.tv/amp/{{ article.url }}/" />
+			<meta property="og:image:width" content="1920" />
+			<meta property="og:image:height" content="1080" />
+			<meta property="og:type" content="article" />
+			<meta property="article:published_time" content="{{ article.meta.published }}" />
+			<meta property="article:modified_time" content="{{ article.meta.modified }}" />
+			<meta property="article:publisher" content="" />
+			<meta property="article:section" content="{{ article.meta.category }}" />
+			{% if article.meta.facebook|length > 0 %}
+				<meta property="article:author" content="{{ article.meta.facebook.author_id }}" />
+				<meta property="fb:profile_id" content="{{ article.meta.facebook.author_id }}" />
+			{% endif %}
+			{% if article.meta.keywords|length > 0 %}
+				{% for keyword in article.meta.keywords %}
+					<meta property="article:tag" content="{{ keyword }}" />
+				{% endfor %}
+			{% endif %}
+			{% if article.meta.related|length > 0 %}
+				{% for articles in article.meta.related %}
+					<meta property="og:see_also" content="{{ articles }}" />
+				{% endfor %}
+			{% endif %}
+			{% if article.meta.twitter|length > 0 %}
+				<meta name="twitter:creator" content="@{{ article.meta.twitter }}" />
+			{% endif %}
+			<meta name="twitter:card" content="summary_large_image">
+			<script type="application/ld+json">
+				{
+				  "@context": "http://schema.org",
+				  "@type": "NewsArticle",
+				  "mainEntityOfPage": {
+					"@type": "WebPage",
+					"@id": "{{ rooturi }}/{{ page.url }}"
+				  },
+				  "headline": "{{ article.title }}",
+				  "image": {
+					"@type": "ImageObject",
+					"url": "{{ page.image }}",
+					"height": 1920,
+					"width": 1080
+				  },
+				  "datePublished": "{{ article.meta.published }}",
+				  "dateModified": "{{ article.meta.modified }}",
+				  "author": {
+					"@type": "Person",
+					"name": "{{ page.author }}"
+				  },
+				  "publisher": {
+					"@type": "Organization",
+					"name": "LVLUP Dojo",
+					"logo": {
+					  "@type": "ImageObject",
+					  "url": "{{ baseuri }}/img/amp.png",
+					  "width": 600,
+					  "height": 60
+					}
+				  },
+				  "description": "{{ page.description }}"
+				}
+			</script>
+		{% else %}
+			{% if product %}
+				<meta property="og:type" content="product" />
+				<meta name="twitter:card" content="summary_large_image">
+				<meta property="product:product_link" content="{{ rooturi }}/{{ page.url }}" />
+				<meta property="product:retailer" content="1618982205092330" />
+				<meta property="product:price:amount" content="{{ product.cost.price }}" />
+				<meta property="product:price:currency" content="usd" />
+				{% if product.cost.discount is not null %}
+					<meta property="product:sale_price:amount" content="{{ product.cost.discount_value }}" />
+					<meta property="product:sale_price:currency" content="usd" />
+					<meta property="product:sale_price_dates:start" content="{{ product.cost.discount_start_iso }}" />
+					<meta property="product:sale_price_dates:end" content="{{ product.cost.discount_end_iso }}" />
+				{% endif %}
+				<script type="application/ld+json">
+					{
+						"@context": "http://schema.org/",
+						"@type": "Product",
+						"category": "{{ product.category }}",
+						"name": "{{ product.name }}",
+						"image": "{{ baseuri }}{{ product.thumbnail }}",
+						"description": "{{ page.description }}",
+						"offers": {
+							"@type": "Offer",
+							"priceCurrency": "usd",
+							"price": "{{ product.cost.price }}",
+							"availability": "http://schema.org/InStock",
+							"seller": {
+								"@type": "Person",
+								"name": "{{ product.mentor.name }}"
+							}
+						},
+						"aggregateRating": {
+							"@type": "AggregateRating",
+							"ratingValue": "{{ product.rating }}",
+							"reviewCount": "{{ product.reviewCount }}"
+						}
+					}
+				</script>
+			{% else %}
+				<meta property="og:type" content="site" />
+				<meta name="twitter:card" content="summary">
+			{% endif %}
+		{% endif %}
+		<script type="application/ld+json">
+			{ 
+				"@context": "http://schema.org", 
+				"@type": "Organization", 
+				"name": "LVLUP Dojo",
+				"url": "{{ rooturi }}/", 
+				"logo": "{{ baseuri }}/img/logo.png", 
+				"sameAs": [
+					{{ page.social.links }}
+				]
+			}
+		</script>		
+		<link rel="stylesheet" href="{{ baseuri }}/css/bootstrap-4.min.css?v=4.0.0" type="text/css" media="all" />
+		<link rel="stylesheet" href="{{ baseuri }}/css/application.css?v=0.1.9" type="text/css" media="all" />
+		<link rel="stylesheet" href="{{ baseuri }}/css/application.site.css?v=0.7.5" type="text/css" media="all" />
+		{% block stylesheets %}{% endblock %}
+		{% include 'global/JSHeader.html' %}
+	</head>
+
+	<body>
+		{% include 'global/Header.html' %}
+		{% block body %}{% endblock %}
+		{% include 'global/Footer.html' %}		
+		<script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+			var baseuri = '{{ baseuri }}';
+		</script>
+		<script type="text/javascript" src="https://www.google.com/recaptcha/api.js"></script>
+		<script type="text/javascript" src="{{ baseuri }}/js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="{{ baseuri }}/js/jquery-ui-1.12.1.min.js"></script>
+		<script type="text/javascript" src="{{ baseuri }}/js/bootstrap.bundle.min.js?v=4.0.0"></script>
+		<script type="text/javascript" src="{{ baseuri }}/js/sweetalert.min.js?v=2.1.0"></script>
+		<script type="text/javascript" src="{{ baseuri }}/js/jquery-dojo.js?v=0.4.2"></script>
+        {% block javascripts %}{% endblock %}
+		{% include 'global/JSFooter.html' %}
+	</body>
+</html>

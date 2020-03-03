@@ -1,0 +1,44 @@
+{% extends 'acp/base.html' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Delete User "{{ u.user_email }}"</h3>
+                </div>
+                <div class="card-body text-center">
+                    {% if success %}
+                        <div class="alert alert-success" role="alert">
+                            User "{{ u.user_email }}" removed.
+                        </div>
+                    {% else %}
+                        <form method="POST" enctype="multipart/form-data" action="">
+                            {% if error %}
+                                <div class="alert alert-danger" role="alert">
+                                    <ul class="mb-0">
+                                        {% for message in error %}
+                                            <li>{{ message }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                            <p>Are you sure you want to remove this user?</p>
+                            <p>
+                                <strong>Note:</strong> Removing a user can not be undone! This will also remove all related information to this user from the system.
+                            </p>
+                            <button type="submit" class="btn btn-success" name="submit" id="submit">
+                                <i class="fas fa-user-times"></i> Yes, Remove User
+                            </button> 
+                            <a href="{{ rooturi }}/admin/users/" class="btn btn-danger">
+                                <i class="fas fa-times"></i> No, Cancel
+                            </a>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

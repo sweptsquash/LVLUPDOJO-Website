@@ -1,0 +1,53 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<header class="parallax-banner header-shadow bg-dark-grey">
+		<div class="image" style="background-position: top center; background-image:url('{{ baseuri }}{% if product.banner is not null %}{{ product.banner }}{% else %}{{ config.default_banner }}{% endif %}');"></div>
+		<div class="container">
+			<div class="row pb-5 mb-5">
+				<div class="col-7 pb-5 mb-5">
+					<h1 id="courseTitle">{{ product.name }}</h1>
+					<p>
+						<select id="courseRating">
+							<option value=""></option>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+						</select>
+						<a href="#reviews" title="{{ product.reviewCount }} Reviews" class="text-light">( {{ product.reviewCount }} Reviews )</a>
+					</p>
+					<p>
+						<strong>Mentor:</strong> <a href="{{ baseuri }}/courses/m/{{ product.mentor.slug }}/" class="text-light">{{ product.mentor.name }}</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="bg-grey diagonal-open-dark light text-dark py-5 clip-path-fix">
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-12 col-sm-8 col-md-8">
+					{% if noaccess is not null %}
+						<div role="alert" class="alert alert-contrast alert-danger">
+							<div class="icon">
+								<i class="far fa-times"></i>
+							</div>
+							<div class="message">
+								You do not have access to this course, consider getting a subscription or buying this course to view this material.
+							</div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success" role="alert">
+                            <p>Your download should begin shortly.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+		</div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

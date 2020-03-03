@@ -1,0 +1,102 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<header class="parallax-banner small-banner header-shadow bg-dark-grey">
+		<div class="image" style="background-image:url({{ baseuri }}{{ config.default_banner }});"></div>
+		<div class="container">
+			<div class="row pb-5 mb-5">
+				<div class="col-12 text-center pb-5 mb-5">
+					<h1>Contact Us</h1>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="bg-grey diagonal-open-dark light text-dark py-5 clip-path-fix">
+		<div class="container">
+			<div class="row row-cards">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Our Mailing Address</h5>
+                        </div>
+                        <div class="card-map card-map-placeholder">
+                            <iframe width="374" height="240" frameborder="0" style="border:0;width:100%;" src="https://www.google.com/maps/embed/v1/place?q=6191+Temple+Hill+Drive,+Los+Angeles,+CA,+90068&key=AIzaSyDHpG0fiKama9h2cdHbmP9XqjoUyrYvAJ8" allowfullscreen></iframe> 
+                        </div>
+                        <div class="card-body">
+                            <div class="media mb-5">
+                                <img class="d-flex mr-5 rounded" src="/img/dojo-logo-128x128.png" alt="LVLUP Dojo">
+                                <div class="media-body">
+                                    <h5>LVLUP Dojo</h5>
+                                    <address class="text-muted small">
+                                        {{ contact.address }}
+                                    </address>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8 col-md-6">
+                    <form method="POST" enctype="multipart/form-data" action="" class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Contact Us</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if success %}
+                                <div class="alert alert-success mb-0" role="alert">
+                                    {{ success }}
+                                </div>
+                            {% else %}
+                                {% if error %}
+                                    <div class="alert alert-danger" role="alert">
+                                        <ul>
+                                            {% for message in error %}
+                                                <li>{{ message }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="first_name" class="col-form-label">First Name</label>
+                                            <input type="text" name="first_name" id="first_name" class="form-control" value="{{ form.first_name }}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6">
+                                        <div class="form-group">
+                                            <label for="last_name" class="col-form-label">Last Name</label>
+                                            <input type="text" name="last_name" id="last_name" class="form-control" value="{{ form.last_name }}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="email" class="col-form-label">Email</label>
+                                            <input type="text" name="email" id="email" class="form-control" value="{{ form.email }}" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="message" class="col-form-label">Message</label>
+                                            <textarea name="message" id="message" class="form-control" rows="5">{{ form.message }}</textarea>
+                                        </div>
+                                        <div class="form-group mb-0">
+                                            <div class="g-recaptcha" id="g-recaptcha-contact" data-theme="light" data-sitekey="{{ config.recaptcha_key }}"></div>
+                                        </div>	
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% if success is null %}
+                            <div class="card-footer text-center">
+                                <input type="hidden" name="CSRFName" value="{{ form.CSRF[0] }}" />
+                                <input type="hidden" name="CSRFToken" value="{{ form.CSRF[1] }}" />
+                                <button type="submit" name="sendContact" id="sendContact" class="btn btn-primary">Send Contact</button>
+                            </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+    
+{% block javascripts %}{% endblock %}

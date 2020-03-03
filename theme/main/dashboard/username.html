@@ -1,0 +1,68 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<header class="parallax-banner small-banner header-shadow bg-dark-grey">
+		<div class="image"  style="background-image:url('{{ baseuri }}{{ config.default_banner }}');"></div>
+		<div class="container">
+			<div class="row pb-5 mb-5">
+				<div class="col-12 text-center pb-5 mb-5">
+					<h1>Create A Username</h1>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="bg-white diagonal-open-dark text-dark py-5 clip-path-fix">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-6">
+					{% if user.username_clean is not null %}
+						<div class="swal-icon swal-icon--success">
+							<span class="swal-icon--success__line swal-icon--success__line--long"></span>
+							<span class="swal-icon--success__line swal-icon--success__line--tip"></span>
+							<div class="swal-icon--success__ring"></div>
+							<div class="swal-icon--success__hide-corners"></div>
+						</div>
+						<div class="swal-title">Username Created</div>
+					{% else %}
+						{% if success %} 
+							<div class="swal-icon swal-icon--success">
+								<span class="swal-icon--success__line swal-icon--success__line--long"></span>
+								<span class="swal-icon--success__line swal-icon--success__line--tip"></span>
+								<div class="swal-icon--success__ring"></div>
+								<div class="swal-icon--success__hide-corners"></div>
+							</div>
+							<div class="swal-title">Username Created</div>
+						{% else %}
+							<form class="needs-validation" name="usernameForm" id="usernameForm" method="post" action="">
+								{% if error %}
+									<div class="alert alert-danger" role="alert">
+										<ul>
+											{% for message in error %}
+												<li>{{ message }}</li>
+											{% endfor %}
+										</ul>
+									</div>
+								{% endif %}
+								<div class="form-group" id="usernameGroup">
+									<label for="username">Username</label>
+									<input type="text" name="username" id="username" class="form-control" value="{{ username }}" />
+									<p class="text-muted">
+										<small>May only contain numbers &amp; letters. Must be between 3 and 20 characters. <strong>Note:</strong> Once created your username, you can't change it again.</small>
+									</p>
+								</div>
+								<div class="form-group text-center mb-0">
+									<button type="submit" name="submitUsername" id="submitUsername" class="btn btn-lg btn-primary">
+										Create Username
+									</button>
+								</div>
+							</form>
+						{% endif %}
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</section>	
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

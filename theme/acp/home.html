@@ -1,0 +1,73 @@
+{% extends 'acp/base.html' %}
+
+{% block body %}
+	<div class="page-header">
+		<h1 class="page-title">
+			Admin Dashboard
+		</h1>
+	</div>
+	<div class="row row-cards">
+		<div class="col-12">
+			<div class="alert alert-primary">
+				<strong>Please note:</strong> Legacy subscribers from Paypal may not be able to cancel subscriptions directly due to the former site's structure. You are able to either cancel these manually or they are able to cancel via their Paypal.
+			</div>
+		</div>
+		<div class="col-sm-6 col-lg-3">
+			<div class="card p-3">
+				<div class="d-flex align-items-center">
+					<span class="stamp stamp-md bg-blue mr-3">
+						<i class="fe fe-dollar-sign"></i>
+					</span>
+					<div>
+						<h4 class="m-0"><a href="{{ baseuri }}/analytics/subscriptions">{{ analytics.subscribers.total }} <small>Subscriptions</small></a></h4>
+						<small class="text-muted">{{ analytics.subscribers.new }} New Subscriptions</small>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6 col-lg-3">
+			<div class="card p-3">
+				<div class="d-flex align-items-center">
+					<span class="stamp stamp-md bg-green mr-3">
+						<i class="fe fe-shopping-cart"></i>
+					</span>
+					<div>
+						<h4 class="m-0"><a href="{{ baseuri }}/analytics/courses/">{{ analytics.orders.total }} <small>Courses Sold</small></a></h4>
+						<small class="text-muted">{{ analytics.orders.new }} Recent Courses Sold</small>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6 col-lg-3">
+			<div class="card p-3">
+				<div class="d-flex align-items-center">
+					<span class="stamp stamp-md bg-red mr-3">
+						<i class="fe fe-users"></i>
+					</span>
+					<div>
+						<h4 class="m-0"><a href="{{ baseuri }}/analytics/users/">{{ analytics.users.total }} <small>Users</small></a></h4>
+						<small class="text-muted">{{ analytics.users.new }} New Users</small>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6 col-lg-3">
+			<div class="card p-3">
+				<div class="d-flex align-items-center">
+					<span class="stamp stamp-md bg-yellow mr-3">
+						<i class="fe fe-message-square"></i>
+					</span>
+					<div>
+						<h4 class="m-0"><a href="{{ baseuri }}/analytics/reviews/">{{ analytics.reviews.total }} <small>Reviews</small></a></h4>
+						<small class="text-muted">{{ analytics.reviews.new }} New Reviews</small>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row row-cards row-deck">
+		
+	</div>	
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

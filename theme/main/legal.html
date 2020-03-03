@@ -1,0 +1,40 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<header class="parallax-banner small-banner header-shadow bg-dark-grey">
+		<div class="image" style="background-image:url({{ baseuri }}{{ config.default_banner }});"></div>
+		<div class="container">
+			<div class="row pb-5 mb-5">
+				<div class="col-12 text-center pb-5 mb-5">
+					<h1>{{ legal.title }}</h1>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="bg-grey diagonal-open-dark light text-dark py-5 clip-path-fix">
+		<div class="container">
+			<div class="row">
+                <div class="col-lg-3 col-md-3">
+                    <div class="list-group">
+                        <a href="{{ baseuri }}/refund-policy/" class="list-group-item list-group-item-action{% if legal.nav == 'refund' %} active{% endif %}">
+                            Refund Policy
+                        </a>
+                        <a href="{{ baseuri }}/cookie-policy/" class="list-group-item list-group-item-action{% if legal.nav == 'cookie' %} active{% endif %}">
+                            Cookie Policy
+                        </a>
+                        <a href="{{ baseuri }}/privacy-policy/" class="list-group-item list-group-item-action{% if legal.nav == 'privacy' %} active{% endif %}">
+                            Privacy Policy
+                        </a>
+                        <a href="{{ baseuri }}/terms-and-conditions/" class="list-group-item list-group-item-action{% if legal.nav == 'terms' %} active{% endif %}">
+                            Terms &amp; Conditions
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-9 col-md-9">
+                    {{ legal.text }}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock body %}

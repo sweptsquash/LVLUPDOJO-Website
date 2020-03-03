@@ -1,0 +1,170 @@
+{% extends 'main/base.html' %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="{{ baseuri }}/css/datatables.min.css" type="text/css" />
+{% endblock %}
+
+{% block body %}
+	<header class="parallax-banner small-banner header-shadow bg-dark-grey">
+		<div class="image"  style="background-image:url('{{ baseuri }}{{ config.default_banner }}');"></div>
+		<div class="container">
+			<div class="row pb-5 mb-5">
+				<div class="col-12 text-center pb-5 mb-5">
+					<h1>Billing</h1>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="bg-white diagonal-open-dark text-dark py-5 clip-path-fix">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3">
+					<div class="list-group">
+						<a href="{{ baseuri }}/dashboard/" class="list-group-item list-group-item-action">
+							<i class="fas fa-book"></i> My Courses
+						</a>
+						<a href="{{ baseuri }}/dashboard/account/" class="list-group-item list-group-item-action">
+							<i class="fas fa-user"></i> Account
+						</a>
+						<a href="{{ baseuri }}/dashboard/remove/" class="list-group-item list-group-item-action">
+							<i class="fas fa-user-times"></i> Delete Account
+						</a>
+						<a href="{{ baseuri }}/dashboard/security/" class="list-group-item list-group-item-action">
+							<i class="fas fa-shield-alt"></i> Security
+						</a>
+						<a href="{{ baseuri }}/dashboard/billing/" class="list-group-item list-group-item-action active">
+							<i class="fas fa-credit-card"></i> Billing
+						</a>
+						<a href="{{ baseuri }}/dashboard/connections/" class="list-group-item list-group-item-action">
+							<i class="fas fa-link"></i> Connections
+						</a>
+					</div>
+				</div>
+				<div class="col-md-9">
+					<div class="form-group row">
+						<div class="col-2 pt-2">
+							Plan
+						</div>
+						<div class="col-7 pt-2">
+							<strong>{{ plan.name }}</strong>
+						</div>
+						<div class="col-3 text-right">
+							{#{% if plan.id != 3 and plan.id != 4 %}#}
+							{% if plan.id == 1 %}
+								<a href="{{ baseuri }}/dashboard/billing/upgrade/" class="btn btn-outline-primary">Upgrade Membership</a>
+							{% endif %}
+						</div>
+					</div>
+					{% if plan.id != 1 and plan.id != 4 %}
+						<div class="form-group row">
+							<div class="col-2">
+								Payment
+							</div>
+							<div class="col-7">
+								<p class="mb-1">{{ plan.payment.method }} Account: <strong>{{ plan.payment.identity }}</strong></p>
+								<p class="mb-1">{% if plan.cancelled %}Cancels On{% else %}Next Payment{% endif %}: <strong>{{ plan.payment.next_billing }}</strong></p>
+								<p class="mb-0">Total Amount: <strong>${{ plan.payment.amount }}</strong></p>
+							</div>
+							{% if plan.cancelled %}
+
+							{% else %}
+								<div class="col-3 pt-4 text-right">
+									<a href="{{ baseuri }}/dashboard/billing/cancel/" class="btn btn-outline-danger">
+										<i class="far fa-times"></i> Cancel Membership
+									</a>
+								</div>
+							{% endif %}
+						</div>
+					{% endif %}					
+					<h5 class="mb-3">Payment History</h5>
+					{% if plan.payment.history %}
+						<table class="table table-bordered table-hover" id="paymentHistory" data-page-length="25" cellpadding="0" cellspacing="0" border="0" data-order="[[ 2, &quot;desc&quot; ]]">
+							<thead class="thead-light">
+								<tr>
+									<th scope="col">&nbsp;</th>
+									<th scope="col">ID</th>
+									<th scope="col">Date</th>
+									<th scope="col">Payment Method</th>
+									<th scope="col">Amount</th>
+									<th scope="col" class="text-center">Receipt</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for payment in plan.payment.history %}
+									<tr{% if payment.type == 'failed' %} class="table-secondary text-muted"{% endif %} id="Transaction{{ payment.id }}">
+										<td class="text-center" data-order="{{ payment.typeid }}">
+											{% if payment.typeid == 2 %}
+												<i class="far fa-plus text-info" data-toggle="tooltip" data-placement="left" title="New Order"></i>
+											{% elseif payment.typeid == 3 %}
+												<i class="far fa-hourglass text-info" data-toggle="tooltip" data-placement="left" title="Payment Processing"></i>
+											{% elseif payment.typeid == 4 %}
+												<i class="far fa-check text-info" data-toggle="tooltip" data-placement="left" title="Payment Authorized"></i>
+											{% elseif payment.typeid == 5 %}
+												<i class="far fa-check text-success" data-toggle="tooltip" data-placement="left" title="Payment Successful"></i>
+											{% elseif payment.typeid == 6 %}
+												<i class="far fa-times text-danger" data-toggle="tooltip" data-placement="left" title="Payment Failed"></i>
+											{% elseif payment.typeid == 7 %}
+												<i class="far fa-ban text-danger" data-toggle="tooltip" data-placement="left" title="Subscription Cancelled"></i>
+											{% elseif payment.typeid == 8 %}
+												<i class="far fa-reply text-dark" data-toggle="tooltip" data-placement="left" title="Payment Refunded"></i>
+											{% endif %}
+										</td>
+										<td>
+											{{ payment.id }}
+										</td>
+										<td data-order="{{ payment.date.raw }}">
+											{{ payment.date.formatted }}
+										</td>
+										<td data-sort="">
+											<i class="{% if payment.method == 'PayPal' %}fab fa-paypal{% else %}fas fa-credit-card{% endif %}" data-toggle="tooltip" data-placement="left" title="{{ payment.method }}"></i> {{ payment.account }}
+										</td>
+										<td data-order="{{ payment.amount }}">
+											{{ payment.currency }}{{ payment.amount }}
+										</td>
+										<td class="text-center">
+											<a href="{{ baseuri }}/dashboard/billing/receipt/{{ payment.id }}/" target="_blank">
+												<i class="far fa-cloud-download" data-toggle="tooltip" data-placement="top" title="Download Receipt"></i>
+											</a>
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					{% else %}
+						<div class="alert alert-info" role="alert">No Payment History to display.</div>
+					{% endif %}
+					{#{% if plan.downgrade %}
+						<div class="card border-danger text-danger mt-3">
+							<div class="card-header">Downgrade your plan</div>
+							<div class="card-body">
+								<div class="row">
+									<div class="col-6">
+										Downgrade anytime. Need to talk to someone? <a href="https://www.lvlupdojo.com/contact-us/">Contact Us</a>, We'd love to help.
+									</div>
+									<div class="col-6 pt-1 text-right">
+										<a href="{{ baseuri }}/dashboard/billing/downgrade/" class="btn btn-outline-danger">Downgrade To {{ plan.downgrade }}</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endif %}#}
+				</div>
+			</div>		
+		</div>
+	</section>
+{% endblock %}
+
+{% block javascripts %}
+	{% if plan.payment.history %}
+		<script type="text/javascript" src="{{ rooturi }}/js/datatables.min.js"></script>
+		<script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+			$(function() {
+				$('#paymentHistory').DataTable({
+					stateSave: true,
+					searching: false
+				});
+			});
+		</script>
+	{% endif %}
+{% endblock %}

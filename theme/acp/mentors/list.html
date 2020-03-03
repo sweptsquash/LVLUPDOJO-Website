@@ -1,0 +1,53 @@
+{% extends 'acp/base.html' %}
+
+{% block body %}
+	<div class="page-header">
+		<h1 class="page-title">
+			Mentors
+		</h1>
+	</div>
+	<div class="row row-cards row-deck">
+		{% if mentors %}
+            {% for key, mentor in mentors %}
+                <div class="col-md-4">
+                    <div class="card course m-2" id="mentor{{ mentor.id }}">
+                        <div class="card-image">
+                            <img class="card-img-top" src="{{ baseuri }}{% if mentor.avatar %}{{ mentor.avatar }}{% else %}/img/course/1.jpg{% endif %}" alt="{{ mentor.name }}" />
+                            <div class="card-img-overlay">
+                                <h5 class="card-title mb-0">{{ mentor.name }}</h5>
+                            </div>
+                        </div>
+                        <div class="card-body text-dark">
+                            <div class="row mb-3">
+                                <div class="col-sm-12 col-md-12 text-right">
+                                    {% if mentor.active == 1 %}
+                                        <span class="badge badge-pill badge-primary">Active</span>
+                                    {% else %}
+                                        <span class="badge badge-pill badge-danger">Inactive</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row mb-0">
+                                <div class="col-sm-12 col-md-12">
+                                    <a href="{{ rooturi }}/admin/mentors/e/{{ mentor.id }}/" class="btn btn-block btn-success">
+                                        <i class="fas fa-pencil"></i> Edit Mentor
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            
+            {% if pagination %}
+                <div class="col-md-12">{{ pagination }}</div>
+            {% endif %}
+        {% else %}
+            <div class="col-md-12">
+                <div class="alert alert-danger" role="alert">No Mentors Found...</div>
+            </div>
+        {% endif %}
+	</div>	
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

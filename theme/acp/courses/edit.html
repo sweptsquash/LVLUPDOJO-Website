@@ -1,0 +1,970 @@
+{% extends 'acp/base.html' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/froala_editor.pkgd.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/char_counter.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/code_view.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/colors.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/emoticons.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/file.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/fullscreen.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/image.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/image_manager.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/line_breaker.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/quick_insert.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/special_characters.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/table.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/plugins/video.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ baseuri }}/css/themes/gray.min.css" type="text/css" />
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <form method="POST" enctype="multipart/form-data" action="">
+                {% if success %}
+                    <div class="alert alert-success" role="alert">
+                        Course Updated.
+                    </div>
+                {% endif %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Editting Course</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if error %}
+                            <div class="alert alert-danger" role="alert">
+                                <ul class="mb-0">
+                                    {% for message in error %}
+                                        <li>{{ message }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="thumbnailUpload" class="col-form-label required">Course Thumbnail</label>
+                                    <input type="file" name="thumbnailUpload" id="thumbnailUpload" />
+                                    <p class="text-muted">
+                                        <small>Image must be 700 (width) x 552 (height), JPG or PNG and less than 12MB in size.</small>                            
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <label for="title" class="col-form-label required">Course Title</label>
+                                    <input type="text" class="form-control" name="courseTitle" id="courseTitle" placeholder="Course Title" value="{{ form.title }}" />
+                                    <p class="form-text mb-0">
+                                        <strong>URL:</strong> https://www.lvlupdojo.com/courses/<span id="courseSlug" class="font-weight-bold">{{ form.slug }}</span>
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="courseCost" class="col-form-label required">Course Base Price</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-dollar-sign"></i>
+                                            </span>
+                                        </div>
+                                        <input type="number" min="0" step="0.25" name="courseCost" id="courseCost" value="{{ form.cost }}" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="bannerUpload" class="col-form-label required">Course Banner</label>
+                                    <input type="file" name="bannerUpload" id="bannerUpload" />
+                                    <p class="text-muted">
+                                        <small>Image must be 1920 (width) x 1080 (height), JPG or PNG and less than 12MB in size.</small>                            
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="courseCategory" class="col-form-label">Course Category</label>
+                                    <select class="form-control" name="courseCategory" id="courseCategory">
+                                        {% for category in categories %}
+                                            <option value="{{ category.id }}"{% if form.category == category.id %} selected{% endif %}>{{ category.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="coursePublished" class="col-form-label">Course Published?</label>
+                                    <select name="coursePublished" id="coursePublished" class="form-control">
+                                        <option value="0"{% if form.published is null %} selected{% endif %}>No</option>
+                                        <option value="1"{% if form.published == 1 %} selected{% endif %}>Yes</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="courseDescription" class="col-form-label">Description</label>
+                                    <textarea name="courseDescription" id="courseDescription">{{ form.description }}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="courseKeywords" class="col-form-label">Keywords</label>
+                                    <input type="text" name="courseKeywords" id="courseKeywords" placeholder="Keywords..." value="{{ form.keywords }}" />
+                                    <p class="text-muted">
+                                        <small>Keywords to be seperated with a comma.</small>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>                            
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Course Mentor</h3>
+                    </div>
+                    <div class="card-body" id="mentorContainer">
+                        <div id="mentorOptions" class="row justify-content-center{% if form.mentor.mode == 'create' or form.mentor.id != 0 %} d-none{% endif %}">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="mentor" class="col-form-label required">Mentor</label>
+                                    <div class="typeahead-container">
+                                        <div id="scrollable-dropdown-menu">
+                                            <input type="text" class="form-control typeahead" id="mentors" name="mentors" placeholder="Mentor..." value="{{ form.mentor.name }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group text-center">
+                                    <button type="button" name="createMentor" id="createMentor" class="btn btn-success">
+                                        <i class="fas fa-user-plus"></i> Create Mentor
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="mentorView" class="row{% if form.mentor.mode == 'search' and form.mentor.id == 0 %} d-none{% endif %}">
+                            <div class="col-3">
+                                <img src="{{ form.mentor.avatar }}" id="mentorAvatar" class="img-thumbnail" width="" height="" />
+                            </div>
+                            <div class="col-9">
+                                <p>
+                                    <strong>Name:</strong> <span id="mentorName">{{ form.mentor.name }}</span>
+                                </p>
+                                <p>
+                                    <strong>Keywords:</strong>
+                                </p>
+                                <p>
+                                    <span id="mentorKeywords">{{ form.mentor.keywords }}</span>
+                                </p>
+                                <p>
+                                    <strong>Description:</strong>
+                                </p>
+                                <span id="mentorDescription">{{ form.mentor.description }}</span>
+                            </div>
+                        </div>
+                        <div id="mentorCreation" class="row{% if form.mentor.mode != 'create' %} d-none{% endif %}">
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="mentorAvatarUpload" class="col-form-label required">Mentor Avatar</label>
+                                    <input type="file" name="mentorAvatarUpload" id="mentorAvatarUpload" />
+                                    <p class="text-muted">
+                                        <small>Image must be 700 (width) x 552 (height), JPG or PNG and less than 12MB in size.</small>                            
+                                    </p>
+                                    <input type="hidden" name="mentorAvatarFile" id="mentorAvatarFile" value="{{ form.mentor.avatar }}" />
+                                </div>
+                            </div>
+                            <div class="col-9">
+                                <div class="form-group">
+                                    <label for="mentorCreateName" class="col-form-label required">Mentor Name</label>
+                                    <input type="text" class="form-control" name="mentorCreateName" id="mentorCreateName" value="{{ form.mentor.name }}" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="mentorCreateKeywords" class="col-form-label">Mentor Keywords</label>
+                                    <input type="text" name="mentorCreateKeywords" id="mentorCreateKeywords" placeholder="Keywords..." value="{{ form.mentor.keywords }}" />
+                                    <p class="text-muted">
+                                        <small>Keywords to be seperated with a comma.</small>
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="description" class="col-form-label">Mentor Description</label>
+                                    <textarea name="mentorCreateDescription" id="mentorCreateDescription">{{ form.mentor.description }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Course Material</h3>
+                    </div>
+                    <div class="card-body" id="materialContainer">
+                        {% if form.materials %}
+                            {% set lesson = 1 %}
+                            {% set asset = 1 %}
+
+                            {% for key,material in form.materials %}
+                                {% if material.type == 1 or material.type == 2 or material.type == 4 %}
+                                    <div id="lesson{{ lesson }}">
+                                        <h4 class="border-bottom pb-2">Lesson {{ lesson }}</h4>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="lessonThumbnailUpload{{ lesson }}" class="col-form-label">Lesson Thumbnail</label>
+                                                    <input type="file" name="lessonThumbnailUpload{{ lesson }}" id="lessonThumbnailUpload{{ lesson }}" />
+                                                    <p class="text-muted">
+                                                        <small>Image must be 533 (width) x 300 (height), JPG or PNG and less than 12MB in size.</small>                            
+                                                    </p>
+                                                </div>
+                                                <div class="form-group">
+                                                    <a href="#" class="btn btn-block btn-danger" data-toggle="remove" data-type="lesson" data-entry="{{ lesson }}" data-id="{{ material.id }}">
+                                                        <i class="fal fa-trash"></i> Remove Lesson
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-9">
+                                                <div class="form-group">
+                                                    <label for="lessonTitle{{ lesson }}}" class="col-form-label">Lesson Title</label>
+                                                    <input type="text" class="form-control" name="lessonTitle{{ lesson }}" id="lessonTitle{{ lesson }}" placeholder="Lesson Title" value="{{ material.title }}" />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="lessonPublished{{ lesson }}" class="col-form-label">Lesson Published?</label>
+                                                    <select name="lessonPublished{{ lesson }}" id="lessonPublished{{ lesson }}" class="form-control">
+                                                        <option value="0"{% if material.published is null %} selected{% endif %}>No</option>
+                                                        <option value="1"{% if material.published == 1 %} selected{% endif %}>Yes</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="lessonFree{{ lesson }}" class="col-form-label">Lesson Free?</label>
+                                                    <select name="lessonFree{{ lesson }}" id="lessonFree{{ lesson }}" class="form-control">
+                                                        <option value="0"{% if material.free is null %} selected{% endif %}>No</option>
+                                                        <option value="1"{% if material.free == 1 %} selected{% endif %}>Yes</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="lessonType{{ lesson }}" class="col-form-label">Lesson Type</label>
+                                                    <select name="lessonType{{ lesson }}" id="lessonType{{ lesson }}" class="form-control">
+                                                        <option value="1"{% if material.type == 1 %} selected{% endif %}>Intro Video</option>
+                                                        <option value="2"{% if material.type == 2 %} selected{% endif %}>Lesson Video</option>
+                                                        <option value="4"{% if material.type == 4 %} selected{% endif %}>Outro Video</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="lessonSource{{ lesson }}" class="col-form-label">Lesson Source</label>
+                                                    <input type="text" class="form-control" name="lessonSource{{ lesson }}" id="lessonSource{{ lesson }}" placeholder="Lesson Source" value="{{ material.source }}" />
+                                                </div>
+                                                <div class="alert alert-info" role="alert">
+                                                    <p>A Lesson Source is the URL found in the video embed code. Below is an example of an embed code provided by Vimeo, the part we're interested in is just the URL located in the SRC attribute.</p>
+                                                    <pre>
+                                                        <code>
+                                                            &lt;iframe src="<strong>https://player.vimeo.com/video/187566172?title=0&byline=0&portrait=0</strong>" width="640" height="360" frameborder="0" &gt;&lt;/iframe&gt;
+                                                        </code>
+                                                    </pre>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="lessonDuration{{ lesson }}" class="col-form-label">Lesson Duration</label>
+                                                    <input type="text" class="form-control" name="lessonDuration{{ lesson }}" id="lessonDuration{{ lesson }}" placeholder="Lesson Duration" value="{{ material.duration }}" />
+                                                    <p class="text-muted">
+                                                        <small>Format: HH:MM:SS</small>
+                                                    </p>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="lessonDescription{{ lesson }}" class="col-form-label">Description</label>
+                                                    <textarea name="lessonDescription{{ lesson }}" id="lessonDescription{{ lesson }}">{{ material.description }}</textarea>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="lessonKeywords{{ lesson }}" class="col-form-label">Keywords</label>
+                                                    <input type="text" name="lessonKeywords{{ lesson }}" id="lessonKeywords{{ lesson }}" placeholder="Keywords..." value="{{ material.keywords }}" />
+                                                    <p class="text-muted">
+                                                        <small>Keywords to be seperated with a comma.</small>
+                                                    </p>
+                                                    <input type="hidden" name="lessonThumbnailFile{{ lesson }}" id="lessonThumbnailFile{{ lesson }}" value="{{ material.thumbnail }}" />
+                                                    <input type="hidden" name="lessonThumbnailFileType{{ lesson }}" id="lessonThumbnailFileType{{ lesson }}" value="{{ material.thumbnail_type }}" />
+                                                    <input type="hidden" name="lessonOrder{{ lesson }}" id="lessonOrder{{ lesson }}" value="{{ material.order }}" />
+                                                    <input type="hidden" name="lessonID{{ lesson }}" id="lessonID{{ lesson }}" value="{{ material.id }}" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% set lesson = lesson + 1 %}
+                                {% else %}
+                                    <div id="workbook{{ asset }}">
+                                        <h4 class="border-bottom pb-2">Workbook {{ asset }}</h4>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <a href="#" class="btn btn-block btn-danger" data-toggle="remove" data-type="workbook" data-entry="{{ asset }}" data-id="{{ material.id }}">
+                                                        <i class="fal fa-trash"></i> Remove Workbook
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-9">
+                                                <div class="form-group">
+                                                    <label for="materialTitle{{ asset }}" class="col-form-label">Workbook Title</label>
+                                                    <input type="text" class="form-control" name="materialTitle{{ asset }}" id="materialTitle{{ asset }}" placeholder="Workbook Title" value="{{ material.title }}" />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="materialPublished{{ asset }}" class="col-form-label">Workbook Published?</label>
+                                                    <select name="materialPublished{{ asset }}" id="materialPublished{{ asset }}" class="form-control">
+                                                        <option value="0"{% if material.published is null %} selected{% endif %}>No</option>
+                                                        <option value="1"{% if material.published == 1 %} selected{% endif %}>Yes</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="materialFree{{ asset }}" class="col-form-label">Workbook Free?</label>
+                                                    <select name="materialFree{{ asset }}" id="materialFree{{ asset }}" class="form-control">
+                                                        <option value="0"{% if material.free is null %} selected{% endif %}>No</option>
+                                                        <option value="1"{% if material.free == 1 %} selected{% endif %}>Yes</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="materialType{{ asset }}" class="col-form-label">Workbook Type</label>
+                                                    <select name="materialType{{ asset }}" id="materialType{{ asset }}" class="form-control">
+                                                        <option value="3"{% if material.type == 3 %} selected{% endif %}>Lesson Workbook</option>
+                                                        <option value="5"{% if material.type == 5 %} selected{% endif %}>Course Workbook</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="materialWorkbookUpload{{ asset }}" class="col-form-label">Workbook</label>
+                                                    <input type="file" name="materialWorkbookUpload{{ asset }}" id="materialWorkbookUpload{{ asset }}" />
+                                                    <p class="text-muted">
+                                                        <small>Workbook must be PDF and less than 100MB in size.</small>                            
+                                                    </p>
+                                                </div>
+                                                <input type="hidden" name="materialWorkbookFile{{ asset }}" id="materialWorkbookFile{{ asset }}" value="{{ material.workbook }}" />
+                                                <input type="hidden" name="materialWorkbookFileType{{ asset }}" id="materialWorkbookFileType{{ asset }}" value="{{ material.workbook_type }}" />
+                                                <input type="hidden" name="materialOrder{{ asset }}" id="materialOrder{{ asset }}" value="{{ material.order }}" />
+                                                <input type="hidden" name="materialID{{ asset }}" id="materialID{{ asset }}" value="{{ material.id }}" /> 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% set asset = asset + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <div class="alert alert-info text-center" role="alert">
+                                To add new course material click on the relavent buttons below "Add Course Video" / "Add Course Material".
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <p class="text-center">
+                    <input type="hidden" name="lessons" id="lessons" value="{{ form.total_lessons }}" />
+                    <input type="hidden" name="workbooks" id="workbooks" value="{{ form.total_workbooks }}" />
+                    <input type="hidden" name="mentorMode" id="mentorMode" value="{{ form.mentor.mode }}" />
+                    <input type="hidden" name="mentorID" id="mentorID" value="{{ form.mentor.id }}" />
+                    <input type="hidden" name="bannerFile" id="bannerFile" value="{{ form.banner }}" />
+                    <input type="hidden" name="thumbnailFile" id="thumbnailFile" value="{{ form.thumbnail }}" />
+                    <a href="{{ baseuri }}/admin/courses/" class="btn btn-danger">
+                        <i class="far fa-times"></i> Cancel
+                    </a>
+                    <button type="button" class="btn btn-primary" name="addVideo" id="addVideo">
+                        <i class="far fa-plus"></i> Add Course Video
+                    </button>
+                    <button type="button" class="btn btn-primary" name="addMaterial" id="addMaterial">
+                        <i class="far fa-plus"></i> Add Course Material
+                    </button>
+                    <button type="submit" class="btn btn-primary" name="updateCourse" id="updateCourse">
+                        <i class="fas fa-save"></i> Update Course                        
+                    </button>
+                </p>
+            </form>
+        </div>        
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="{{ baseuri }}/js/handlebars.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/typeahead.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/codemirror.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.3.0/mode/xml/xml.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/froala_editor.pkgd.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/align.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/char_counter.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/code_view.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/colors.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/emoticons.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/entities.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/file.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/font_family.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/font_size.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/fullscreen.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/image.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/image_manager.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/inline_style.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/line_breaker.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/link.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/lists.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/paragraph_format.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/paragraph_style.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/print.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/quick_insert.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/quote.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/save.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/special_characters.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/table.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/url.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/plugins/video.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/selectize.min.js"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/filepond.min.js?v=2.1.1"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/filepond.plugin.preview.min.js?v=2.0.1"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/filepond.plugin.filesize.min.js?v=1.0.4"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/filepond.plugin.filetype.min.js?v=1.1.0"></script>
+    <script type="text/javascript" src="{{ baseuri }}/js/jquery.filepond.min.js?v=2.1.1"></script>
+    <script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+        document.querySelector('button[name="updateCourse"]').addEventListener("click", function(){
+			window.btn_clicked = true;
+		});
+
+        window.onbeforeunload = function(){
+			if(!window.btn_clicked && (document.querySelector('input[name="courseTitle"]').value !== null && document.querySelector('input[name="courseTitle"]').value !== '')) {
+				return "You're about to leave this page, any changes you've made will be lost if you don't submit it.";
+			}
+		};
+
+        $(function() {
+            if($('input[name="courseTitle"]').val().trim() !== '') {
+                var value = $('input[name="courseTitle"]').val();
+                value = value.replace(/[^a-zA-Z0-9]+/gi, '-');
+                value = value.toLowerCase();
+                value = value.replace(/^-+|-+$/gi, '');
+                value = value.trim();
+
+                $('#courseSlug').html(value);
+            }
+
+            $('input[name="courseTitle"]').keyup(function () {
+                var value = $(this).val().trim();
+                value = value.replace(/[^a-zA-Z0-9]+/gi, '-');
+                value = value.toLowerCase();
+                value = value.replace(/^-+|-+$/gi, '');
+                value = value.trim();
+
+                $('#courseSlug').html(value);
+            });
+
+            $.fn.filepond.registerPlugin(
+                FilePondPluginImagePreview,
+                FilePondPluginFileValidateSize,
+                FilePondPluginFileValidateType
+            );
+
+            $.fn.filepond.setDefaults({
+                maxFileSize: '12MB',
+                acceptedFileTypes: [
+                    'image/png',
+                    'image/jpg',
+                    'image/jpeg'
+                ],
+                labelIdle: 'Drag & Drop your picture or <span class="filepond--label-action">Browse</span>'
+            });
+
+            $('#bannerUpload').filepond({
+                allowMultiple: false,
+                instantUpload: true,
+                class: 'filepond-banner',
+                acceptedFileTypes: [
+                    'image/jpg',
+                    'image/jpeg',
+                    'image/png'
+                ],
+                server: {
+                    url: baseuri + '/FilePond.php'
+                },
+                {% if form.banner %}
+                    files: [{
+                        source: '{{ form.banner }}',
+                        options: {
+                            type: '{{ form.banner_type }}'
+                        }
+                    }],
+                {% endif %}
+                onaddfile: function(error, file) {
+                    file.setMetadata('method', 'banner');
+                },
+                onprocessfile: function(error, file) {
+                    $('#bannerFile').val(file.serverId);
+                },
+                onprocessfileundo: function(file) {
+                    $('#bannerFile').val('');
+                },
+                onremovefile: function(file) {
+                    $('#bannerFile').val('');
+                }
+            });
+
+            $('#thumbnailUpload').filepond({
+                allowMultiple: false,
+                instantUpload: true,
+                class: 'filepond-thumbnail',
+                acceptedFileTypes: [
+                    'image/jpg',
+                    'image/jpeg',
+                    'image/png'
+                ],
+                server: {
+                    url: baseuri + '/FilePond.php'                        
+                },   
+                {% if form.thumbnail %}
+                    files: [{
+                        source: '{{ form.thumbnail }}',
+                        options: {
+                            type: '{{ form.thumbnail_type }}'
+                        }
+                    }],
+                {% endif %}
+                onaddfile: function(error, file) {
+                    file.setMetadata('method', 'thumbnail');
+                },
+                onprocessfile: function(error, file) {
+                    $('#thumbnailFile').val(file.serverId);
+                },
+                onprocessfileundo: function(file) {
+                    $('#thumbnailFile').val('');
+                },
+                onremovefile: function(file) {
+                    $('#thumbnailFile').val('');
+                }
+            });
+
+            $('textarea#courseDescription').froalaEditor({
+                toolbarButtons: [
+                    'fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 
+                    'fontFamily', 'fontSize', 'color', 'inlineStyle', 'paragraphStyle', '|', 
+                    'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', '-', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', '|', 
+                    'emoticons', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 
+                    'print', 'spellChecker', 'help', 'html', '|', 
+                    'undo', 'redo'
+                ],
+                videoInsertButtons: ['videoBack', '|', 'videoByURL', 'videoEmbed'],
+                imageInsertButtons: ['imageBack', '|', 'imageUpload', 'imageByURL'],
+                quickInsertTags: [''],
+                pluginsEnabled: null,
+                heightMin: 450,
+                theme: 'gray',
+                imageMaxSize: 12000000,
+                imageUploadURL: baseuri + '/api/upload/course/',
+                imageOutputSize: true
+            });
+
+            $('#mentorAvatarUpload').filepond({
+                allowMultiple: false,
+                instantUpload: true,
+                class: 'filepond-thumbnail',
+                acceptedFileTypes: [
+                    'image/jpg',
+                    'image/jpeg',
+                    'image/png'
+                ],
+                server: {
+                    url: baseuri + '/FilePond.php'                        
+                },   
+                {% if form.mentor.avatar %}
+                    files: [{
+                        source: '{{ form.mentor.avatar }}',
+                        options: {
+                            type: '{{ form.mentor.avatar_type }}'
+                        }
+                    }],
+                {% endif %}
+                onprocessfile: function(error, file) {
+                    $('#mentorAvatarFile').val(file.serverId);
+                },
+                onprocessfileundo: function(file) {
+                    $('#mentorAvatarFile').val('');
+                },
+                onremovefile: function(file) {
+                    $('#mentorAvatarFile').val('');
+                }
+            });
+
+            $('textarea[name="mentorCreateDescription"]').froalaEditor({
+                toolbarButtons: [
+                    'fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 
+                    'fontFamily', 'fontSize', 'color', 'inlineStyle', 'paragraphStyle', '|', 
+                    'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', '-', 'insertLink', '|', 
+                    'emoticons', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 
+                    'print', 'spellChecker', 'help', 'html', '|', 
+                    'undo', 'redo'
+                ],
+                videoInsertButtons: [],
+                imageInsertButtons: [],
+                quickInsertTags: [''],
+                pluginsEnabled: null,
+                heightMin: 450,
+                theme: 'gray',
+            });
+
+            $('input[name="mentorCreateKeywords"]').selectize({
+                delimiter: ',',
+                persist: false,
+                create: function (input) {
+                    return {
+                        value: input,
+                        text: input
+                    }
+                }
+            });
+            
+            var mentors = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: baseuri + '/api/mentors/%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            {% verbatim %}
+                $('#scrollable-dropdown-menu .typeahead').typeahead({
+                    hint: true,
+                    highlight: true
+                }, {
+                    name: 'mentors',
+                    display: 'name',
+                    limit: 15,
+                    source: mentors,
+                    templates: {
+                        empty: '<span class="row m-0"><div class="alert alert-danger mb-0" role="alert" style="width:100%;">No Mentors Found...</div></span>',
+                        suggestion: function(data) {
+                            var name = decodeURIComponent(escape(data.name));
+
+                            return '<span class="tt-row text-left" title="' + name + '"><span class="avatar avatar-md" style="background-image:url(\'' + data.avatar + '\');"></span><span class="username" style="height:auto; max-height:60px;"><p class="mb-0">' + name + '</p></span></span>';
+                        }
+                        /*suggestion: Handlebars.compile('<span class="tt-row text-left" title="{{ name }}"><span class="avatar avatar-md" style="background-image:url(\'{{ avatar }}\');"></span><span class="username" style="height:auto; max-height:60px;"><p class="mb-0">{{ name }}</p></span></span>')*/
+                    }
+                });
+            {% endverbatim %}
+
+            $('#scrollable-dropdown-menu .typeahead').bind('typeahead:select', function(ev, item) {
+                var keywords = '';
+
+                if(item.keywords) {
+                    $.each(item.keywords, function(key,keyword) {
+                        keywords += '<span class="btn btn-secondary">' + keyword + '</span> ';
+                    });
+                } else {
+                    keywords = '<div class="alert alert-danger" role="alert">Mentor has no keywords</div>';
+                }
+
+                $('input[name="mentorID"]').val(item.id);
+                $('#mentorView #mentorAvatar').attr('src', item.avatar);
+                $('#mentorView #mentorName').html(item.name);
+                $('#mentorView #mentorKeywords').html(keywords);
+                $('#mentorView #mentorDescription').html(item.description);
+
+                $('#mentorOptions').addClass('d-none');
+                $('#mentorView').removeClass('d-none');
+
+                $('input[name="mentorMode"]').val('search');
+            });
+
+            $('button[name="createMentor"]').click(function() {
+                $('#mentorOptions').addClass('d-none');
+                $('#mentorCreation').removeClass('d-none');
+
+                $('input[name="mentorMode"]').val('create');
+            });
+
+            $('#courseKeywords').selectize({
+                delimiter: ',',
+                persist: false,
+                create: function (input) {
+                    return {
+                        value: input,
+                        text: input
+                    }
+                }
+            });
+
+            var lesson = {% if form.total_lessons > 0 %}{{ form.total_lessons + 1 }}{% else %}1{% endif %};
+            var materials = {% if form.total_workbooks > 0 %}{{ form.total_workbooks + 1 }}{% else %}1{% endif %};
+            var order = {% if form.total_materials > 0 %}{{ form.total_materials + 1 }}{% else %}1{% endif %};
+
+            {% if form.materials %}
+                {% set lesson = 1 %}
+                {% set asset = 1 %}
+
+                {% for key,material in form.materials %}
+                    {% if material.type == 1 or material.type == 2 or material.type == 4 %}
+                        $('#lessonThumbnailUpload{{ lesson }}').filepond({
+                            allowMultiple: false,
+                            instantUpload: true,
+                            class: 'filepond-thumbnail',
+                            acceptedFileTypes: [
+                                'image/jpg',
+                                'image/jpeg',
+                                'image/png'
+                            ],
+                            {% if material.thumbnail %}
+                                files: [{
+                                    source: '{{ material.thumbnail }}',
+                                    options: {
+                                        type: '{{ material.thumbnail_type }}'
+                                    }
+                                }],
+                            {% endif %}
+                            server: {
+                                url: baseuri + '/FilePond.php'
+                            }
+                        });
+
+                        $('#lessonThumbnailUpload{{ lesson }}').on('FilePond:processfile', function(e) {
+                            var fileField = $(this).attr('id');
+                                fileField = fileField.replace('Upload', 'File');
+
+                            $('#'+fileField).val(e.detail.file.serverId);
+                        });
+
+                        $('#lessonThumbnailUpload{{ lesson }}').on('FilePond:processfileundo', function(e) {
+                            var fileField = $(this).attr('id');
+                                fileField = fileField.replace('Upload', 'File');
+
+                            $('#'+fileField).val('');
+                        });
+
+                        $('#lessonThumbnailUpload{{ lesson }}').on('FilePond:removefile', function(e) {
+                            var fileField = $(this).attr('id');
+                                fileField = fileField.replace('Upload', 'File');
+
+                            $('#'+fileField).val('');
+                        });
+
+                        $('textarea#lessonDescription{{ lesson }}').froalaEditor({
+                            toolbarButtons: [
+                                'fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 
+                                'fontFamily', 'fontSize', 'color', 'inlineStyle', 'paragraphStyle', '|', 
+                                'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', '-', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', '|', 
+                                'emoticons', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 
+                                'print', 'spellChecker', 'help', 'html', '|', 
+                                'undo', 'redo'
+                            ],
+                            videoInsertButtons: ['videoBack', '|', 'videoByURL', 'videoEmbed'],
+                            imageInsertButtons: ['imageBack', '|', 'imageUpload', 'imageByURL'],
+                            quickInsertTags: [''],
+                            pluginsEnabled: null,
+                            heightMin: 450,
+                            theme: 'gray',
+                            imageMaxSize: 12000000,
+                            imageUploadURL: baseuri + '/api/upload/course/',
+                            imageOutputSize: true
+                        });
+
+                        $('#lessonKeywords{{ lesson }}').selectize({
+                            delimiter: ',',
+                            persist: false,
+                            create: function (input) {
+                                return {
+                                    value: input,
+                                    text: input
+                                }
+                            }
+                        });
+
+                        {% set lesson = lesson + 1 %}
+                    {% else %}
+                       $('#materialWorkbookUpload{{ asset }}').filepond({
+                            allowMultiple: false,
+                            instantUpload: true,
+                            class: 'filepond-banner',
+                            maxFileSize: '100MB',
+                            acceptedFileTypes: [
+                                'application/pdf'
+                            ],
+                            {% if material.workbook %}
+                                files: [{
+                                    source: '{{ material.workbook }}',
+                                    options: {
+                                        type: '{{ material.workbook_type }}'
+                                    }
+                                }],
+                            {% endif %}
+                            server: {
+                                url: baseuri + '/FilePond.php'
+                            }
+                        });
+
+                        $('#materialWorkbookUpload{{ asset }}').on('FilePond:processfile', function(e) {
+                            var fileField = $(this).attr('id');
+                                fileField = fileField.replace('Upload', 'File');
+
+                            $('#'+fileField).val(e.detail.file.serverId);
+                        });
+
+                        $('#materialWorkbookUpload{{ asset }}').on('FilePond:processfileundo', function(e) {
+                            var fileField = $(this).attr('id');
+                                fileField = fileField.replace('Upload', 'File');
+
+                            $('#'+fileField).val('');
+                        });
+
+                        $('#materialWorkbookUpload{{ asset }}').on('FilePond:removefile', function(e) {
+                            var fileField = $(this).attr('id');
+                                fileField = fileField.replace('Upload', 'File');
+
+                            $('#'+fileField).val('');
+                        });
+                        {% set asset = asset + 1 %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            $('#addVideo').click(function(e) {
+                e.preventDefault();
+
+                if($('#materialContainer > .alert.alert-info').length > 0) {
+                    $('#materialContainer > .alert.alert-info').remove();
+                }
+
+                $('#materialContainer').append('<div id="lesson'+lesson+'"><h4 class="border-bottom pb-2">Lesson ' + lesson + '</h4><div class="row"><div class="col-md-3"><div class="form-group"><label for="lessonThumbnailUpload'+lesson+'" class="col-form-label">Lesson Thumbnail</label><input type="file" name="lessonThumbnailUpload'+lesson+'" id="lessonThumbnailUpload'+lesson+'" /><p class="text-muted"><small>Image must be 533 (width) x 300 (height), JPG or PNG and less than 12MB in size.</small></p></div><div class="form-group"><a href="#" class="btn btn-block btn-danger" data-toggle="remove" data-type="lesson" data-entry="'+lesson +'" data-id=""><i class="fal fa-trash"></i> Remove Lesson</a></div></div><div class="col-md-9"><div class="form-group"><label for="lessonTitle'+lesson+'" class="col-form-label">Lesson Title</label><input type="text" class="form-control" name="lessonTitle'+lesson+'" id="lessonTitle'+lesson+'" placeholder="Lesson Title" value="" /></div><div class="form-group"><label for="lessonPublished'+lesson+'" class="col-form-label">Lesson Published?</label><select name="lessonPublished'+lesson+'" id="lessonPublished'+lesson+'" class="form-control"><option value="0">No</option><option value="1">Yes</option></select></div><div class="form-group"><label for="lessonFree'+lesson+'" class="col-form-label">Lesson Free?</label><select name="lessonFree'+lesson+'" id="lessonFree'+lesson+'" class="form-control"><option value="0">No</option><option value="1">Yes</option></select></div><div class="form-group"><label for="lessonType'+lesson+'" class="col-form-label">Lesson Type</label><select name="lessonType'+lesson+'" id="lessonType'+lesson+'" class="form-control"><option value="1">Intro Video</option><option value="2">Lesson Video</option><option value="4">Outro Video</option></select></div><div class="form-group"><label for="lessonSource'+lesson+'" class="col-form-label">Lesson Source</label><input type="text" class="form-control" name="lessonSource'+lesson+'" id="lessonSource'+lesson+'" placeholder="Lesson Source" value="" /></div><div class="alert alert-info" role="alert"><p>A Lesson Source is the URL found in the video embed code. Below is an example of an embed code provided by Vimeo, the part we\'re interested in is just the URL located in the SRC attribute.</p><pre><code>&lt;iframe src="<strong>https://player.vimeo.com/video/187566172?title=0&byline=0&portrait=0</strong>" width="640" height="360" frameborder="0" &gt;&lt;/iframe&gt;</code></pre></div><div class="form-group"><label for="lessonDuration'+lesson+'" class="col-form-label">Lesson Duration</label><input type="text" class="form-control" name="lessonDuration'+lesson+'" id="lessonDuration'+lesson+'" placeholder="Lesson Duration" value="00:00:00" /><p class="text-muted"><small>Format: HH:MM:SS</small></p></div><div class="form-group"><label for="lessonDescription'+lesson+'" class="col-form-label">Description</label><textarea name="lessonDescription'+lesson+'" id="lessonDescription'+lesson+'"></textarea> </div><div class="form-group"><label for="lessonKeywords'+lesson+'" class="col-form-label">Keywords</label><input type="text" name="lessonKeywords'+lesson+'" id="lessonKeywords'+lesson+'" placeholder="Keywords..." value="" /><p class="text-muted"><small>Keywords to be seperated with a comma.</small></p><input type="hidden" name="lessonThumbnailFile'+lesson+'" id="lessonThumbnailFile'+lesson+'" value="" /><input type="hidden" name="lessonThumbnailFileType'+lesson+'" id="lessonThumbnailFileType'+lesson+'" value="limbo" /><input type="hidden" name="lessonOrder' + lesson + '" id="lessonOrder' + lesson + '" value="' + order + '" /><input type="hidden" name="lessonID'+lesson+'" id="lessonID'+lesson+'" value="0" /></div></div></div></div>');
+
+                $('#lessonThumbnailUpload'+lesson).filepond({
+                    allowMultiple: false,
+                    instantUpload: true,
+                    class: 'filepond-thumbnail',
+                    acceptedFileTypes: [
+                        'image/jpg',
+                        'image/jpeg',
+                        'image/png'
+                    ],
+                    server: {
+                        url: baseuri + '/FilePond.php'
+                    }
+                });
+
+                $('#lessonThumbnailUpload'+lesson).on('FilePond:processfile', function(e) {
+                    var fileField = $(this).attr('id');
+                        fileField = fileField.replace('Upload', 'File');
+
+                    $('#'+fileField).val(e.detail.file.serverId);
+                });
+
+                $('#lessonThumbnailUpload'+lesson).on('FilePond:processfileundo', function(e) {
+                    var fileField = $(this).attr('id');
+                        fileField = fileField.replace('Upload', 'File');
+
+                    $('#'+fileField).val('');
+                });
+
+                $('#lessonThumbnailUpload'+lesson).on('FilePond:removefile', function(e) {
+                    var fileField = $(this).attr('id');
+                        fileField = fileField.replace('Upload', 'File');
+
+                    $('#'+fileField).val('');
+                });
+
+                $('textarea#lessonDescription'+lesson).froalaEditor({
+                    toolbarButtons: [
+                        'fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 
+                        'fontFamily', 'fontSize', 'color', 'inlineStyle', 'paragraphStyle', '|', 
+                        'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', '-', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', '|', 
+                        'emoticons', 'specialCharacters', 'insertHR', 'selectAll', 'clearFormatting', '|', 
+                        'print', 'spellChecker', 'help', 'html', '|', 
+                        'undo', 'redo'
+                    ],
+                    videoInsertButtons: ['videoBack', '|', 'videoByURL', 'videoEmbed'],
+                    imageInsertButtons: ['imageBack', '|', 'imageUpload', 'imageByURL'],
+                    quickInsertTags: [''],
+                    pluginsEnabled: null,
+                    heightMin: 450,
+                    theme: 'gray',
+                    imageMaxSize: 12000000,
+                    imageUploadURL: baseuri + '/api/upload/course/',
+                    imageOutputSize: true
+                });
+
+                $('#lessonKeywords'+lesson).selectize({
+                    delimiter: ',',
+                    persist: false,
+                    create: function (input) {
+                        return {
+                            value: input,
+                            text: input
+                        }
+                    }
+                });
+
+                $('input[name="lessons"]').val(lesson);
+
+                lesson++;
+                order++;
+            });
+
+            $('#addMaterial').click(function (e) {
+                e.preventDefault();
+
+                if($('#materialContainer > .alert.alert-info').length > 0) {
+                    $('#materialContainer > .alert.alert-info').remove();
+                }
+
+                $('#materialContainer').append('<div id="workbook'+materials+'"><h4 class="border-bottom pb-2">Workbook '+materials +'</h4><div class="row"><div class="col-md-3"><div class="form-group"><a href="#" class="btn btn-block btn-danger" data-toggle="remove" data-type="workbook" data-entry="'+materials +'" data-id=""><i class="fal fa-trash"></i> Remove Workbook</a></div></div><div class="col-md-9"><div class="form-group"><label for="materialTitle'+materials+'" class="col-form-label">Workbook Title</label><input type="text" class="form-control" name="materialTitle'+materials+'" id="materialTitle'+materials+'" placeholder="Workbook Title" /></div><div class="form-group"><label for="materialPublished'+materials+'" class="col-form-label">Workbook Published?</label><select name="materialPublished'+materials+'" id="materialPublished'+materials+'" class="form-control"><option value="0">No</option><option value="1">Yes</option></select></div><div class="form-group"><label for="materialFree'+materials+'" class="col-form-label">Workbook Free?</label><select name="materialFree'+materials+'" id="materialFree'+materials+'" class="form-control"><option value="0">No</option><option value="1">Yes</option></select></div><div class="form-group"><label for="materialType'+materials+'" class="col-form-label">Workbook Type</label><select name="materialType'+materials+'" id="materialType'+materials+'" class="form-control"><option value="3">Lesson Workbook</option><option value="5">Course Workbook</option></select></div><div class="form-group"><label for="materialWorkbookUpload'+materials+'" class="col-form-label">Workbook</label><input type="file" name="materialWorkbookUpload'+materials+'" id="materialWorkbookUpload'+materials+'" /><p class="text-muted"><small>Workbook must be PDF and less than 100MB in size.</small></p><input type="hidden" name="materialWorkbookFile'+materials+'" id="materialWorkbookFile'+materials+'" value="" /><input type="hidden" name="materialWorkbookFileType'+materials+'" id="materialWorkbookFileType'+materials+'" value="limbo" /><input type="hidden" name="materialOrder' + materials + '" id="materialOrder' + materials + '" value="' + order + '" /><input type="hidden" name="materialID' + materials + '" id="materialID' + materials + '" value="0" /> </div></div></div></div>');
+
+                $('#materialWorkbookUpload'+materials).filepond({
+                    allowMultiple: false,
+                    instantUpload: true,
+                    class: 'filepond-banner',
+                    maxFileSize: '100MB',
+                    acceptedFileTypes: [
+                        'application/pdf'
+                    ],
+                    server: {
+                        url: baseuri + '/FilePond.php'
+                    }
+                });
+
+                $('#materialWorkbookUpload'+materials).on('FilePond:processfile', function(e) {
+                    var fileField = $(this).attr('id');
+                        fileField = fileField.replace('Upload', 'File');
+
+                    $('#'+fileField).val(e.detail.file.serverId);
+                });
+
+                $('#materialWorkbookUpload'+materials).on('FilePond:processfileundo', function(e) {
+                    var fileField = $(this).attr('id');
+                        fileField = fileField.replace('Upload', 'File');
+
+                    $('#'+fileField).val('');
+                });
+
+                $('#materialWorkbookUpload'+materials).on('FilePond:removefile', function(e) {
+                    var fileField = $(this).attr('id');
+                        fileField = fileField.replace('Upload', 'File');
+
+                    $('#'+fileField).val('');
+                });
+
+                $('input[name="workbooks"]').val(materials);
+
+                materials++;
+                order++;
+            });
+
+            $(document).on('click', '[data-toggle="remove"]', function(e) { 
+                var id = $(this).attr('data-id'),
+                    type = $(this).attr('data-type'),
+                    entry = $(this).attr('data-entry');
+
+                e.preventDefault();
+
+                if(type !== null && entry !== null) {
+                    swal({
+                        title: "Are you sure?",
+                        text: "Once deleted, you will not be able to recover this course "+type+"!",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            if(id !== undefined && id !== null) {
+                                $.ajax({
+                                    method: 'POST',
+                                    url: baseuri + '/api/course/lesson/remove/',
+                                    data: { lesson: id }
+                                }).done(function(data) {
+                                    if(data.result == 'success') {
+                                        swal("Poof! Your course "+type+" has been deleted!", {icon: "success"}).then((value) => {
+                                            $('#'+type+''+entry).remove();
+                                        });
+                                    }
+                                });
+                            } else {
+                                $('#'+type+''+entry).remove();
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}

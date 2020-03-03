@@ -1,0 +1,222 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+	<header class="parallax-banner small-banner header-shadow bg-dark-grey">
+		<div class="image"  style="background-image:url('{{ baseuri }}{{ config.default_banner }}');"></div>
+		<div class="container">
+			<div class="row pb-5 mb-5">
+				<div class="col-12 text-center pb-5 mb-5">
+					<h1>Account Management</h1>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="bg-white diagonal-open-dark text-dark py-5 clip-path-fix">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3">
+					<div class="list-group">
+						<a href="{{ baseuri }}/dashboard/" class="list-group-item list-group-item-action">
+							<i class="fas fa-book"></i> My Courses
+						</a>
+  						<a href="{{ baseuri }}/dashboard/account/" class="list-group-item list-group-item-action active">
+							<i class="fas fa-user"></i> Account
+						</a>
+						<a href="{{ baseuri }}/dashboard/remove/" class="list-group-item list-group-item-action">
+							<i class="fas fa-user-times"></i> Delete Account
+						</a>
+						<a href="{{ baseuri }}/dashboard/security/" class="list-group-item list-group-item-action">
+							<i class="fas fa-shield-alt"></i> Security
+						</a>
+						<a href="{{ baseuri }}/dashboard/billing/" class="list-group-item list-group-item-action">
+							<i class="fas fa-credit-card"></i> Billing
+						</a>
+						<a href="{{ baseuri }}/dashboard/connections/" class="list-group-item list-group-item-action">
+							<i class="fas fa-link"></i> Connections
+						</a>
+					</div>
+				</div>
+				<div class="col-md-9">
+					{% if form.success %}
+						<div class="form-group">
+							<div class="swal-icon swal-icon--success">
+								<span class="swal-icon--success__line swal-icon--success__line--long"></span>
+								<span class="swal-icon--success__line swal-icon--success__line--tip"></span>
+								<div class="swal-icon--success__ring"></div>
+								<div class="swal-icon--success__hide-corners"></div>
+							</div>
+							<div class="swal-title">Account Updated</div>
+						</div>
+					{% endif %}
+					<div class="form-group text-center" id="avatarContainer">
+						<div class="change-avatar rounded-circle">
+							<img src="{{ baseuri }}{% if user.user_avatar is not null %}{{ user.user_avatar }}{% else %}/img/user/User-160x160.png{% endif %}" class="rounded-circle" id="avatar" alt="Profile Avatar" width="160" height="160">
+						</div>
+						<input name="avatar_upload_file" id="avatar_upload_file" class="d-none" type="file">
+						<p class="text-muted">
+							<small>Maximum dimensions; width: 800, height: 800</small>
+						</p>
+					</div>
+					<form class="needs-validation" name="accountForm" id="accountForm" method="post" action="">
+						{% if form.user_email_valid == false %}
+							<div class="alert alert-info" role="alert">Your email address appears to be invalid, please provide a valid email address.</div>
+						{% endif %}
+						{% if form.error %}
+							<div class="col-md-12">
+								<div class="alert alert-danger" role="alert">
+									<ul>
+										{% for message in form.error %}
+											<li>{{ message }}</li>
+										{% endfor %}
+									</ul>
+								</div>
+							</div>
+						{% endif %}						
+						<div class="form-row">
+							<div class="col-6">
+								<div class="form-group">
+									<label for="user-first-name">First Name:</label>
+									<input type="text" name="user-first-name" id="user-first-name" class="form-control" value="{{ form.user_first_name }}"  tabindex="1" />
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="form-group">
+									<label for="user-lastname">Last Name:</label>
+									<input type="text" name="user-last-name" id="user-last-name" class="form-control" value="{{ form.user_last_name }}" tabindex="2" />
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="form-group">
+									<label for="user-email">Email Address:</label>
+									<div class="input-group">
+										<input type="text" class="form-control is-{% if form.user_email_valid %}valid{% else %}invalid{% endif %}" name="user-email" id="user-email" value="{{ form.user_email }}" tabindex="3" />
+										<div class="input-group-append {% if form.user_email_valid %}valid{% else %}invalid{% endif %}">
+    										<span class="input-group-text">
+												<i class="fas fa-{% if form.user_email_valid %}check{% else %}times{% endif %}"></i>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="form-group">
+									<label class="required">Date Of Birth</label>
+									<div class="row">
+										<div class="col-4">
+											<select class="form-control" name="user-birthday-day" id="user-birthday-day" tabindex="4" required>
+												{% for i in 1..31 %}
+													<option value="{{ i }}"{% if form.user_birthday[0] == i %} selected{% endif %}>{{ i }}</option>
+												{% endfor %}
+											</select>
+										</div>
+										<div class="col-4">
+											<select class="form-control" name="user-birthday-month" id="user-birthday-month" tabindex="5" required>
+												{% for month in 1..12 %}
+													{% set date = month ~ "/1/" ~ page.year %}
+													<option value="{{ date|date("m") }}"{% if form.user_birthday[1] == date|date("m") %} selected{% endif %}>{{ date|date("F") }}</option>
+												{% endfor %}
+											</select>
+										</div>
+										<div class="col-4">
+											<select class="form-control" name="user-birthday-year" id="user-birthday-year" tabindex="6" required>
+												{% for i in 1930..page.year %}
+													<option value="{{ i }}"{% if form.user_birthday[2] == i %} selected{% endif %}>{{ i }}</option>
+												{% endfor %}
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="form-group">
+									<label for="user-dateformat">Date Format</label>
+									<select name="user-dateformat" id="user-dateformat" class="form-control" tabindex="9">
+										{{ options.format }}
+									</select>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="form-group">
+									<label for="user-timezone">Timezone</label>
+									<select name="user-timezone" id="user-timezone" class="form-control" tabindex="10">
+										{{ options.timezone }}
+									</select>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="form-group">
+									<label for="user-from">Country</label>
+									<select name="user-from" id="user-from" class="form-control" tabindex="11">
+										{% for short, country in countries %}
+											<option value="{{ short }}"{% if form.user_from == short %} selected{% endif %}>{{ country }}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="form-check mb-3">
+									<input class="form-check-input" type="checkbox" value="1"{% if user.user_newsletter == 1 %} checked{% endif %} name="user-newsletter" id="user-newsletter" tabindex="12">
+									<label class="form-check-label" for="user-newsletter">Receive the LVLUP Dojo Newsletter</label>
+								</div>
+							</div>
+							<div class="col-12 text-center">
+								<input type="hidden" name="CSRFName" value="{{ form.CSRF[0] }}" />
+								<input type="hidden" name="CSRFToken" value="{{ form.CSRF[1] }}" />
+								<button type="submit" name="updateBtn" id="updateBtn" class="btn btn-lg btn-primary" tabindex="13">
+									<i class="fas fa-save"></i> Update Account
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>		
+		</div>
+	</section>
+{% endblock %}
+
+{% block javascripts %}
+	<script type="text/javascript" nonce="YzY1NjQ3NTQyYWRiNDliODgxOTMwNDkzYzhiZjVmZTMg">
+		$(function() {
+			$('.change-avatar').click(function() {
+				if($('input[name="avatar_upload_file"]').length == 0) {
+					$('#avatarContainer').append('<input type="file" name="avatar_upload_file" id="avatar_upload_file" class="d-none" />');
+				}
+				
+				$('input[name="avatar_upload_file"]').trigger("click");
+			});
+
+			$('input[name="avatar_upload_file"]').change(function() {
+				$('.change-avatar').addClass('avatar-uploading');
+				
+				var fdata = new FormData();
+					fdata.append('method', 'upload');
+					fdata.append('avatar_upload_file', $('input[name="avatar_upload_file"]').prop("files")[0]);
+				
+				$.ajax({
+					type: "POST",
+					url: baseuri + '/api/upload/avatar/',
+					data: fdata,
+					contentType: false,
+					cache: false,
+					processData: false,
+					dataType: "json"
+				}).done(function(data) {
+					$('.change-avatar').removeClass('avatar-uploading');
+					
+					if(data.result == 'success') {
+						$('input[name="avatar_upload_file"]').remove();
+						
+						$('#avatarContainer #avatar').attr('src', data.avatar);
+					} else {
+						swal("An error occurred!", data.message, "error");
+					}
+				}).fail(function(data) {
+					$('.change-avatar').removeClass('avatar-uploading');
+					
+					swal("An error occurred!", data.message, "error");
+				});
+			});
+		});
+	</script>
+{% endblock %}
